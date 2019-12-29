@@ -67,14 +67,14 @@ exports.getDomainHashKey = function(domain, len = 2) {
   return hash.substr(0, len).toLowerCase();
 };
 
-exports.getDkimDir = function(domain, defaultDkim = false) {
+exports.getDkimDir = function(configDir, domain, defaultDkim = false) {
   const folderName = defaultDkim ?
     'default' : exports.getDomainHashKey(domain, 2);
-  return path.join(__dirname, '../config/dkim', folderName);
+  return path.join(configDir, 'dkim', folderName);
 };
 
-exports.getDkim = async function(domain, config, defaultDkim = false) {
-  const dir = exports.getDkimDir(domain, defaultDkim);
+exports.getDkim = async function(configDir, domain, config, defaultDkim = false) {
+  const dir = exports.getDkimDir(configDir, domain, defaultDkim);
   const textPath = path.join(dir, 'txt');
   const id = path.basename(dir);
   const selector = config.dkimSelector || 'moment';
