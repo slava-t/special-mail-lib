@@ -4,8 +4,9 @@ const {getDkim, dnsResolve, allPromises} = require('./util');
 const spfCheck = require('spf-check');
 
 module.exports =  class DomainNameVerifier {
-  constructor(options = {}) {
+  constructor(configDir, options = {}) {
     const self = this;
+    self._configDir = configDir;
     self._environments = options.environments || {};
     self._dnsTimeout = options.dnsTimeout || 5000;
     self._mxVerifiers = {};
@@ -50,6 +51,7 @@ module.exports =  class DomainNameVerifier {
     let dkim = null;
     try {
       dkim = await getDkim(
+        this._configDir,
         domain,
         this._environments[environment]
       );
