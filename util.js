@@ -3,13 +3,42 @@ const fs = require('fs');
 const path = require('path');
 const dns = require('dns');
 const util = require('util');
+const yaml = require('yaml');
+const merge = require('merge');
+const {Base64} = require('js-base64');
+
+const EnvironmentResolver = require('./EnvironmentResolver');
+const DomainNameResolver = require('./DomainNameResolver');
 
 const asyncReadFile = util.promisify(fs.readFile);
+
+exports.DIRECT_CONFIG_HEADERNAME = 'x-debuggex-direct-routing-config';
+exports.DIRECT_POST_URL_HEADERNAME = 'x-debuggex-direct-routing-post-url';
+exports.DIRECT_NOTIFY_URL_HEADERNAME = 'x-debuggex-direct-routing-notify-url';
+exports.DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME =
+  'x-debuggex-direct-dynamic-routing-url';
+exports.JSON64_DATA_HEADERNAME = 'x-postboy-json64-data';
 
 exports.asyncWrapper = function(func) {
   return function(req, res, next) {
     Promise.resolve(func(req, res, next)).catch(next);
   };
+};
+
+exports.clearInboxes = async function(inboxes) {
+  let errors = 0;
+  while (inboxes.length) {
+    const inbox = inboxes.pop();
+    try {
+      await inbox.clear();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  if (errors) {
+    errors = 0;
+    throw new Error('There are errors during inboxes cleanup.');
+  }
 };
 
 exports.errorHandler = function(err, req, res, next) {
@@ -73,10 +102,10 @@ exports.getDkimDir = function(configDir, domain, defaultDkim = false) {
   return path.join(configDir, 'dkim', folderName);
 };
 
-exports.getDkim = async function(configDir, domain, config, defaultDkim = false) {
-  const dir = exports.getDkimDir(configDir, domain, defaultDkim);
-  const textPath = path.join(dir, 'txt');
-  const id = path.basename(dir);
+exports.getDkim = async function(dir, domain, config, defaultDkim = false) {
+  const dkimDir = exports.getDkimDir(dir, domain, defaultDkim);
+  const textPath = path.join(dkimDir, 'txt');
+  const id = path.basename(dkimDir);
   const selector = config.dkimSelector || 'moment';
   const dkimDomain = `${selector}._domainkey.${domain}`;
   const value = await asyncReadFile(textPath, 'utf8');
@@ -151,4 +180,112 @@ exports.copyStream = function(source, dest) {
     });
     source.pipe(dest);
   });
+};
+
+
+exports.getMailServers = function(routingConfig) {
+  const result = new Set();
+  const environments = routingConfig.environments || {};
+  for (const environment of Object.keys(environments)) {
+    const servers = environments[environment].mailServers || [];
+    for (const server of servers) {
+      result.add(server.toLowerCase());
+    }
+  }
+  return result;
+};
+
+exports.getEnvironment = function(targetDomain, options) {
+  const envResult = options.environmentResolver.resolve(targetDomain);
+
+  if (envResult) {
+    return options.routingConfig.environments[envResult.env];
+  }
+};
+
+exports.createResolvers = function(configDir) {
+  const resolverConfig = yaml.parse(
+    fs.readFileSync(path.join(configDir, 'domain-resolver.yaml'), 'utf8')
+  );
+  const resolver = new DomainNameResolver(resolverConfig);
+
+  const routingConfig = exports.parseRoutingConfig(yaml.parse(
+    fs.readFileSync(path.join(configDir, 'routing.yaml'), 'utf8')
+  ));
+
+  const directRoutingConfig = yaml.parse(
+    fs.readFileSync(path.join(configDir, 'direct-routing.yaml'), 'utf8')
+  );
+  const environmentResolver = new EnvironmentResolver(routingConfig);
+
+  return {
+    resolver,
+    resolverConfig,
+    environmentResolver,
+    routingConfig,
+    directRoutingConfig
+  };
+};
+
+
+exports.getDirectNotifyRequestRouting = function(options = {}) {
+  const headers = options.headers || {};
+
+  const result = {};
+  const directNotificationUrl = headers[exports.DIRECT_NOTIFY_URL_HEADERNAME];
+  if (directNotificationUrl) {
+    result.directNotificationUrl = directNotificationUrl[0];
+    const configName = headers[exports.DIRECT_CONFIG_HEADERNAME];
+    const directRoutingConfig = options.directRoutingConfig || {};
+    if (configName) {
+      const config = directRoutingConfig[configName[0]];
+      result.directNotificationHeaders = config.headers || {};
+      result.directNotificationAuth = config.auth || {};
+    }
+  }
+  return result;
+};
+
+exports.getDirectPostRequestRouting = function(request, options) {
+  const headers = options.headers || {};
+  const result = {};
+  const headername = exports.DIRECT_POST_URL_HEADERNAME;
+  if (headername) {
+    const headerValue = headers[headername];
+    if (headerValue) {
+      result.url = headerValue[0];
+    }
+    const directRoutingConfig = options.directRoutingConfig || {};
+    const configName = headers[exports.DIRECT_CONFIG_HEADERNAME];
+    if (configName) {
+      const config = directRoutingConfig[configName[0]];
+      result.headers = config.headers || {};
+      result.auth = config.auth || {};
+    }
+  }
+  if (request) {
+    return merge(true, request, result);
+  }
+  return result;
+};
+
+exports.headersToObject = function(headers) {
+  const headerList = headers.getList();
+  const result = {};
+  for (const header of headerList) {
+    if (!Object.prototype.hasOwnProperty.call(result, header.key)) {
+      result[header.key] = headers.getDecoded(header.key).map(h => h.value);
+    }
+  }
+  return result;
+};
+
+exports.toJson64 = function(data) {
+  const json = JSON.stringify(data);
+  return Base64.encode(json);
+};
+
+exports.fromJson64 = function(data) {
+  const decoded = JSON.parse(data);
+  return JSON.parse(decoded);
 };

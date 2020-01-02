@@ -158,7 +158,7 @@ module.exports = class MxVerifier {
             record
           )
         });
-      } else if (record.hasOwnProperty('newPriority')) {
+      } else if (record.newPriority) {
         const error = record.priority < record.newPriority ?
           'MxPriorityTooLow' : 'MxPriorityTooHigh';
         errors.push(createError(error, record.exchange, record.priority));

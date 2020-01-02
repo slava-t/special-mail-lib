@@ -18,7 +18,7 @@ module.exports = class DomainNameResolver {
       }
       let re = domain;
       if (!(domain.startsWith('^') && domain.endsWith('$'))) {
-        re = domain.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+        re = '^' + domain.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&') + '$';
       }
       this.routes.push({
         ...route,
@@ -41,6 +41,11 @@ module.exports = class DomainNameResolver {
       for (let i = 0; i < this.routes.length; ++i) {
         const route = this.routes[i];
         const re = route.domain;
+        let {uri} = route;
+        if (!uri) {
+          uri = this.uri;
+        }
+
         if (domain.match(re)) {
           return {
             index: i,
@@ -48,7 +53,7 @@ module.exports = class DomainNameResolver {
             proto: route.proto || this.proto,
             port: route.port || this.port,
             headers: route.headers || this.headers,
-            uri: route.hasOwnProperty('uri') ? route.uri : this.uri
+            uri
           };
         }
       }

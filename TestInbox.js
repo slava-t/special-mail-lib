@@ -1,6 +1,7 @@
 const axios = require('axios');
 const crypto = require('crypto');
 const sleep = require('sleep-promise');
+const urlJoin = require('url-join');
 
 module.exports = class TestInbox {
   constructor(localName = null, name = null, options = {}) {
@@ -8,6 +9,7 @@ module.exports = class TestInbox {
       ...(TestInbox.options || {}),
       ...options
     };
+    this.cancelWaitingFlag = false;
     this.mainDomain = options.mainDomain || 'moment.casa';
     this.localName = localName || TestInbox.generateLocalName();
     this.name = name;
@@ -23,9 +25,9 @@ module.exports = class TestInbox {
     this.groupEmailsUrl = `${this.groupUrl}/emails`;
     this.groupLastEmailUrl = `${this.groupUrl}/last_email}`;
 
+    const emailDomain = this.options.emailDomain || this.mainDomain;
     this.emailDomain = this.group ?
-      `${this.group}.${this.mainDomain}` :
-      this.mainDomain;
+      `${this.group}.${emailDomain}` : emailDomain;
     this.emailAddress = `${this.localName}@${this.emailDomain}`;
 
     this.inboxUrl = `inboxes/${this.emailAddress}`;
@@ -75,6 +77,10 @@ module.exports = class TestInbox {
     return this._extractResult(res);
   }
 
+  getEmailsUrl() {
+    return urlJoin(this.apiUrl, this.inboxEmailsUrl);
+  }
+
   async save(mail) {
     const res = await this.axios({
       method: 'post',
@@ -101,16 +107,21 @@ module.exports = class TestInbox {
     return this._extractResult(res);
   }
 
+  cancelWaiting() {
+    this.cancelWaitingFlag = true;
+  }
+
   async waitForEmailCount(
     count,
     interval = 2000,
     timeout = 30000,
     initialDelay = 500
   ) {
+    this.cancelWaitingFlag = false;
     await sleep(initialDelay);
     let time = Date.now();
     const endTime = time + timeout;
-    while (time < endTime) {
+    while (time < endTime && !this.cancelWaitingFlag) {
       const res = await this.getEmailCount();
       if (res >= count) {
         return res;

@@ -44,7 +44,7 @@ const errors = {
 };
 
 const createError = function(error, ...params) {
-  if (!errors.hasOwnProperty(error)) {
+  if (!errors.error) {
     error = 'UnknownError';
   }
   return {

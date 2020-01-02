@@ -3,7 +3,6 @@ module.exports = {
   config: require('./config'),
   DomainNameResolver: require('./DomainNameResolver'),
   DomainNameVerifier: require('./DomainNameVerifier'),
-  EmailRequestCreator: require('./EmailRequestCreator'),
   EmailSorter: require('./EmailSorter'),
   EnvironmentResolver: require('./EnvironmentResolver'),
   createError: require('./error').createError,
@@ -11,5 +10,7 @@ module.exports = {
   mailStoreModel: require('./mail-store-model.js'),
   MxVerifier: require('./MxVerifier'),
   TestInbox: require('./TestInbox'),
-  ...require('./util.js')
-}
+  jobTypes: require('./job-types'),
+  ...require('./util.js'),
+  ...require('./JobQueue.js')
+};
