@@ -44,7 +44,7 @@ const errors = {
 };
 
 const createError = function(error, ...params) {
-  if (!errors.error) {
+  if (!Object.prototype.hasOwnProperty.call(errors, 'error')) {
     error = 'UnknownError';
   }
   return {
