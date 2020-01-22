@@ -39,27 +39,8 @@ module.exports = class RoutingJob {
     const self = this;
 
     try {
-      const environment = getEnvironment(
-        self._targetDomain,
-        self._options
-      );
-
-      if (!environment) {
-        await self._bounceUnauthorized();
-        return;
-      }
-
-      if (!self._mailFrom.user) {
-        await self._routeBouncedEmail(environment);
-        return;
-      }
       const res = self._resolver.createUrl(self._targetDomain);
-      if (!res || res.index < 0) {
-        //resolver could not resolve the target host
-        //it might be a custom domain
-        await self._routeWithCustomDomain(environment);
-
-      } else {
+      if (res && res.index >= 0) {
         const request = {
           url: res.url,
           method: 'post',
@@ -77,7 +58,28 @@ module.exports = class RoutingJob {
           {transpot: self._item.transport},
           getDirectNotifyRequestRouting(self._directOptions)
         );
+        return;
       }
+
+      const environment = getEnvironment(
+        self._targetDomain,
+        self._options
+      );
+
+      if (!environment) {
+        await self._bounceUnauthorized();
+        return;
+      }
+
+      if (!self._mailFrom.user) {
+        await self._routeBouncedEmail(environment);
+        return;
+      }
+
+      //resolver could not resolve the target host
+      //it might be a custom domain
+      await self._routeWithCustomDomain(environment);
+
     } catch (err) {
       console.error('Routing job error:', err);
       throw err;
