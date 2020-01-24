@@ -1,13 +1,15 @@
 const Address = require('address-rfc2821').Address;
+const DSN = require('haraka-dsn');
 // eslint-disable-next-line camelcase
 const {send_email} = require('./plugin-util.js');
-const DSN = require('haraka-dsn');
+const {transportLogInfo} = require('./util.js');
 
 module.exports = class ForwardingJob {
   constructor(item, options) {
     this._plugin = options.plugin;
     this._srs = options.srs;
     this._item = item;
+    this._logInfo = transportLogInfo(item.transport);
   }
 
   async process() {
@@ -15,9 +17,7 @@ module.exports = class ForwardingJob {
       const mailFrom = this._item.transport.mail_from;
       const mailTo = this._item.transport.target;
       // eslint-disable-next-line no-console
-      console.info('--forwarding email-- mailFrom=', mailFrom);
-      // eslint-disable-next-line no-console
-      console.info('--forwarding email-- mailTo=', mailTo);
+      console.info(`--- ForwardingJob start --- ${this._logInfo}`);
       const sender = new Address(
         this._srs.rewrite(mailFrom.user, mailFrom.host),
         'mailtest.momentcrm.com'
@@ -31,6 +31,11 @@ module.exports = class ForwardingJob {
         mailTo.original,
         this._item.eml64,
         DSN.addr_bad_dest_system('Hrenogo')
+      );
+      // eslint-disable-next-line no-console
+      console.info(
+        `--- ForwardingJob done --- sender: ${sender.original}` +
+        `${this._logInfo}`
       );
     } catch (err) {
       console.error('Forwarding job error:', err);

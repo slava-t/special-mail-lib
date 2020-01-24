@@ -2,7 +2,7 @@ const simpleParser = require('mailparser').simpleParser;
 const Iconv = require('iconv').Iconv;
 const EmailSorter = require('./EmailSorter');
 const jobTypes = require('./job-types.js');
-const {getDirectNotifyRequestRouting} = require('./util.js');
+const {getDirectNotifyRequestRouting, transportLogInfo} = require('./util.js');
 
 module.exports = class EmailParsingJob {
   constructor(item, options) {
@@ -13,6 +13,7 @@ module.exports = class EmailParsingJob {
       headers: item.transport.headers,
       directRoutingConfig: this._plugin.directRoutingConfig
     });
+    this._logInfo = transportLogInfo(item.transport);
   }
 
   async process() {
@@ -31,6 +32,10 @@ module.exports = class EmailParsingJob {
       //there is nothing to do. Just let the job to be removed
       return;
     }
+
+    // eslint-disable-next-line no-console
+    console.info(`--- EmailParsingJob parsed--- ${this._logInfo}`);
+
     const sorter = new EmailSorter(this._item, mail);
     const emails = sorter.getSortedOutEmails();
     for (const email of emails) {
@@ -42,12 +47,16 @@ module.exports = class EmailParsingJob {
           job: jobTypes.ROUTE
         };
         await this._plugin.queue.pushItem(newItem, 'mail-route');
+
         await this._queue.notify(
           email.transport.target,
           'in.queue.route',
           {transport: email.transport},
           this._notifyOptions
         );
+
+        // eslint-disable-next-line no-console
+        console.info(`--- EmailParsingJob queued--- ${this._logInfo}`);
       } catch (err) {
         console.error(err);
         await this._queue.notify(

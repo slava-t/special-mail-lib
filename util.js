@@ -6,6 +6,8 @@ const util = require('util');
 const yaml = require('yaml');
 const merge = require('merge');
 const {Base64} = require('js-base64');
+const addressParser = require('addressparser');
+const Address = require('address-rfc2821').Address;
 
 const EnvironmentResolver = require('./EnvironmentResolver');
 const DomainNameResolver = require('./DomainNameResolver');
@@ -288,4 +290,53 @@ exports.toJson64 = function(data) {
 exports.fromJson64 = function(data) {
   const decoded = JSON.parse(data);
   return JSON.parse(decoded);
+};
+
+exports.addressToObject = function(address) {
+  const result = {
+    'original': address.original.toLowerCase(),
+    'host': address.host.toLowerCase(),
+    'user': address.user.toLowerCase()
+  };
+  if (address.original_host) {
+    result['original_host'] = address.original_host.toLowerCase();
+  }
+  return result;
+};
+
+exports.envelopeToTransport = function(envelope) {
+  const toString = Array.isArray(envelope.to) ?
+    envelope.to.join(',') : envelope.to;
+  const to = addressParser(toString).map(
+    a => exports.addressToObject(new Address(a.address))
+  );
+  const fromParsed = addressParser(envelope.from);
+  const from = exports.addressToObject(new Address(
+    fromParsed[0].address
+  ));
+  return {
+    ...envelope,
+    'mail_from': from,
+    'rcpt_to': to,
+    headers: exports.headersToObject(envelope.headers)
+  };
+};
+
+exports.transportLogInfo = function(transport) {
+  if (!transport) {
+    return '';
+  }
+
+  const toAddressObjects = transport.target ?
+    [transport.target] : (transport.rcpt_to || []);
+  const toAddresses = toAddressObjects.map(a=>a.original).join(',');
+  const to = `to: [${toAddresses}]`;
+  const from = transport.mail_from ?
+    ` from: ${transport.mail_from.original}` : '';
+  let id = '';
+  if (transport.headers && transport.headers['message-id']) {
+    id = ` id: ${transport.headers['message-id'][0]}`;
+  }
+
+  return `${to}${from}${id}`;
 };
