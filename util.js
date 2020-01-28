@@ -304,16 +304,65 @@ exports.addressToObject = function(address) {
   return result;
 };
 
+const extractAddress = function(source) {
+  if (typeof source === 'string') {
+    source = addressParser(source);
+  }
+
+  if (Array.isArray(source)) {
+    if (source.length < 1) {
+      return;
+    }
+    source = source[0];
+  }
+
+  if (typeof source === 'object' && source !== null) {
+    return source.address || source.value;
+  }
+
+  if (typeof source === 'string' && source) {
+    return source;
+  }
+};
+
+exports.adjustEnvelope = function(envelope) {
+  const headers = exports.headersToObject(envelope.headers);
+  let from = extractAddress(headers['from']);
+  const replyTo = extractAddress(headers['replyToHeader']);
+  if (!extractAddress(envelope.from)) {
+    if (!from) {
+      return {
+        error: new Error('Missing \'from\' field in envelope')
+      };
+    }
+    envelope.from = from;
+  }
+  if (!from) {
+    from = envelope.from;
+    envelope.headers.remove('from');
+    envelope.headers.add('from', from);
+  }
+  if (!replyTo) {
+    envelope.headers.remove('reply-to');
+    envelope.headers.add('reply-to', from);
+  }
+
+  return {};
+};
+
 exports.envelopeToTransport = function(envelope) {
   const toString = Array.isArray(envelope.to) ?
     envelope.to.join(',') : envelope.to;
   const to = addressParser(toString).map(
     a => exports.addressToObject(new Address(a.address))
   );
+  let from = '';
   const fromParsed = addressParser(envelope.from);
-  const from = exports.addressToObject(new Address(
-    fromParsed[0].address
-  ));
+  if (Array.isArray(fromParsed) && fromParsed.length > 0) {
+    from = exports.addressToObject(new Address(
+      fromParsed[0].address
+    ));
+  }
   return {
     ...envelope,
     'mail_from': from,
