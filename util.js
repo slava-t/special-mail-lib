@@ -184,7 +184,6 @@ exports.copyStream = function(source, dest) {
   });
 };
 
-
 exports.getMailServers = function(routingConfig) {
   const result = new Set();
   const environments = routingConfig.environments || {};

@@ -15,6 +15,16 @@ module.exports = class MxVerifier {
     }
   }
 
+  verifyAnyMx(mxRecords) {
+    const records = MxVerifier._normalizeMxRecords(mxRecords);
+    for (const record of records) {
+      if (this._mailServerSet.has(record.exchange)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   fastVerify(mxRecords) {
     const records = MxVerifier._normalizeMxRecords(mxRecords);
     if (records.length <= this._mailServers.length) {
@@ -29,7 +39,7 @@ module.exports = class MxVerifier {
       }
       ++index;
     }
-    if (this._mailServerSet.has(records[index]) ||
+    if (this._mailServerSet.has(records[index].exchange) ||
       (index > 0 && records[index - 1].priority >= records[index].priority)
     ) {
       return false;

@@ -17,10 +17,26 @@ module.exports =  class DomainNameVerifier {
     });
   }
 
+  async verifyAnyMx(environment, domain) {
+    const verifier = this._mxVerifiers[environment];
+    let records = null;
+    try {
+      records = await dnsResolve(domain, 'MX', this._dnsTimeout);
+    } catch (err) {
+      return {
+        errors: [createError('DnsGettingMxRecordsFailed', domain)]
+      };
+    }
+    return {
+      result: verifier.verifyAnyMx(records),
+      errors: []
+    };
+  }
+
   async fastVerify(environment, domain) {
     const spfResult = await this._verifySpf(environment, domain);
     const dkimResult = await this._verifyDkim(environment, domain);
-    const mxResult = this._verifyMx(environment, domain, true);
+    const mxResult = await this._verifyMx(environment, domain, true);
     return (
       mxResult &&
       dkimResult.errors.length === 0 &&
@@ -223,6 +239,7 @@ module.exports =  class DomainNameVerifier {
       steps
     };
   }
+
 
   async _verifyMx(environment, domain, fast = false) {
     const verifier = this._mxVerifiers[environment];
