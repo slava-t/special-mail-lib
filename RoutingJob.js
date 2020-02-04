@@ -70,7 +70,7 @@ module.exports = class RoutingJob {
         await self._queue.notify(
           self._targetDomain,
           'in.queue.post',
-          {transpot: self._item.transport},
+          {transport: self._item.transport},
           getDirectNotifyRequestRouting(self._directOptions)
         );
         // eslint-disable-next-line no-console
