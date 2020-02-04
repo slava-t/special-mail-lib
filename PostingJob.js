@@ -42,7 +42,11 @@ module.exports = class PostingJob {
         `${response.statusText} url: ${this._request.url} ${this._logInfo}`
       );
     } catch (err) {
-      console.error('Posting job error:', err.message);
+      const headersText = JSON.stringify(this._request.headers || {});
+      console.error(
+        `--- PostingJob error --- url: ${this._request.url} ` +
+        ` headers: ${headersText} message: ${err.message} `
+      );
       throw err;
     }
   }

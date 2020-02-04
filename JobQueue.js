@@ -117,8 +117,8 @@ class JobQueue {
       }
       //const routingConfig = this._jobOptions.routingConfig;
       let url = urlJoin(environment.baseUrl, environment.notificationPostUri);
-      let headers = environment.emailNotificationHeaders || {};
-      let auth = environment.emailNotificationAuth;
+      let headers = environment.notificationPostHeaders || {};
+      let auth = environment.notificationPostAuth;
       if (options.directNotificationUrl) {
         url = options.directNotificationUrl;
         headers = options.directNotificationHeaders;
