@@ -29,6 +29,7 @@ class JobQueue {
       monitorStateIntervalMinutes: options.monitorStateIntervalMinutes || 10
     };
     this._queue = new PgBoss(pgBossOptions);
+    this._resolver = this._jobOptions.resolver;
   }
 
   async _processJob(job) {
@@ -111,20 +112,34 @@ class JobQueue {
         throw new Error(`Invalid notification target: ${target}`);
       }
 
-      const environment =  getEnvironment(target, this._jobOptions);
-      if (!environment) {
-        throw new Error(`Could not find and environment for ${target}`);
+      let url;
+      let headers = {};
+      let auth;
+
+      const res = this._resolver.createUrl(target);
+      if (res && res.index >= 0) {
+        url = res.notificationUrl;
+        headers = res.headers;
+      } else {
+        const environment =  getEnvironment(target, this._jobOptions);
+        if (!environment) {
+          throw new Error(`Could not find and environment for ${target}`);
+        }
+        //const routingConfig = this._jobOptions.routingConfig;
+        url = urlJoin(environment.baseUrl, environment.notificationPostUri);
+        headers = environment.notificationPostHeaders || {};
+        auth = environment.notificationPostAuth;
       }
-      //const routingConfig = this._jobOptions.routingConfig;
-      let url = urlJoin(environment.baseUrl, environment.notificationPostUri);
-      let headers = environment.notificationPostHeaders || {};
-      let auth = environment.notificationPostAuth;
+
       if (options.directNotificationUrl) {
         url = options.directNotificationUrl;
         headers = options.directNotificationHeaders;
         auth = options.directNotificationAuth;
       }
-
+      // eslint-disable-next-line no-console
+      console.info(
+        `--- JobQueue notify request ready --- url: ${url} target: ${target}`
+      );
       const request = {
         url,
         headers,

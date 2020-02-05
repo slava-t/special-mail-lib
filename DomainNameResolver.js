@@ -5,6 +5,7 @@ module.exports = class DomainNameResolver {
     this.proto = config.proto || 'https';
     this.port = config.port;
     this.uri = config.uri || '';
+    this.notificationUri = config.notificationUri || '';
     this.headers = config.headers || {};
 
     for (const route of config.routes) {
@@ -41,9 +42,12 @@ module.exports = class DomainNameResolver {
       for (let i = 0; i < this.routes.length; ++i) {
         const route = this.routes[i];
         const re = route.domain;
-        let {uri} = route;
+        let {uri, notificationUri} = route;
         if (!uri) {
           uri = this.uri;
+        }
+        if (!notificationUri) {
+          notificationUri = this.notificationUri;
         }
 
         if (domain.match(re)) {
@@ -53,7 +57,8 @@ module.exports = class DomainNameResolver {
             proto: route.proto || this.proto,
             port: route.port || this.port,
             headers: route.headers || this.headers,
-            uri
+            uri,
+            notificationUri
           };
         }
       }
@@ -65,7 +70,8 @@ module.exports = class DomainNameResolver {
         proto: this.proto,
         port: this.port,
         headers: this.headers,
-        uri: this.uri
+        uri: this.uri,
+        notificationUri: this.notificationUri
       };
     }
   }
@@ -81,9 +87,12 @@ module.exports = class DomainNameResolver {
       return;
     }
     const port = res.port ? ':' + res.port : '';
+    const baseUrl = `${res.proto}://${res.target}${port}`;
     return {
       ...res,
-      url: `${res.proto}://${res.target}${port}${res.uri}`,
+      baseUrl,
+      url: `${baseUrl}${res.uri}`,
+      notificationUrl: `${baseUrl}${res.notificationUri}`
     };
   }
 };
