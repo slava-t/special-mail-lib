@@ -153,6 +153,14 @@ module.exports = class RoutingJob {
         job: jobTypes.POST,
         request
       }, hashQueueName('mail-post-', url));
+
+      await self._queue.notify(
+        self._targetDomain,
+        'in.queue.post',
+        {transport: self._item.transport},
+        getDirectNotifyRequestRouting(self._directOptions)
+      );
+
       // eslint-disable-next-line no-console
       console.info(
         '--- RoutingJob dynamic routing queued for posting ---' +
@@ -164,6 +172,13 @@ module.exports = class RoutingJob {
         ...self._item,
         job: jobTypes.FORWARD
       }, 'mail-forward');
+
+      await self._queue.notify(
+        self._targetDomain,
+        'in.queue.forward',
+        {transport: self._item.transport},
+        getDirectNotifyRequestRouting(self._directOptions)
+      );
       // eslint-disable-next-line no-console
       console.info(
         '--- RoutingJob dynamic routing queued for forwarding ---' +
@@ -177,6 +192,12 @@ module.exports = class RoutingJob {
         `${this._logInfo}`
       );
       await self._bounceUnauthorized();
+      await self._queue.notify(
+        self._targetDomain,
+        'in.queue.bounce',
+        {transport: self._item.transport},
+        getDirectNotifyRequestRouting(self._directOptions)
+      );
     }
   }
 
@@ -186,6 +207,7 @@ module.exports = class RoutingJob {
       self._plugin,
       self._mailFrom.original,
       self._mailTo.original,
+      self._headers,
       self._item.eml64,
       dsn
     );

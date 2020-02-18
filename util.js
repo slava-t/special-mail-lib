@@ -8,6 +8,7 @@ const merge = require('merge');
 const {Base64} = require('js-base64');
 const addressParser = require('addressparser');
 const Address = require('address-rfc2821').Address;
+const streamBuffers = require('stream-buffers');
 
 const EnvironmentResolver = require('./EnvironmentResolver');
 const DomainNameResolver = require('./DomainNameResolver');
@@ -184,6 +185,31 @@ exports.copyStream = function(source, dest) {
   });
 };
 
+exports.streamToBuffer = async function(source) {
+  const streamBuffer = new streamBuffers.WritableStreamBuffer({
+    initialSize: (64 * 1024),
+    incrementAmount: (64 * 1024)
+  });
+  await exports.copyStream(source, streamBuffer);
+  return streamBuffer.getContents();
+};
+
+exports.streamToBase64 = async function(source) {
+  const buffer = await exports.streamToBuffer(source);
+  return buffer.toString('base64');
+};
+
+exports.bufferToStream = async function(buffer, dest) {
+  const streamBuffer = new streamBuffers.ReadableStreamBuffer({
+    frequency: 10,
+    chunkSize: 64 * 1024
+  });
+  const copyPromise = exports.copyStream(streamBuffer, dest);
+  streamBuffer.put(buffer);
+  streamBuffer.stop();
+  await copyPromise;
+};
+
 exports.getMailServers = function(routingConfig) {
   const result = new Set();
   const environments = routingConfig.environments || {};
@@ -281,6 +307,22 @@ exports.headersToObject = function(headers) {
   return result;
 };
 
+exports.copyRoutingHeaders = function(source, destination) {
+  const routingHeaders = [
+    exports.DIRECT_CONFIG_HEADERNAME,
+    exports.DIRECT_POST_URL_HEADERNAME,
+    exports.DIRECT_NOTIFY_URL_HEADERNAME,
+    exports.DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME,
+    exports.JSON64_DATA_HEADERNAME
+  ];
+  for (const routingHeader of routingHeaders) {
+    const value = source[routingHeader];
+    if (value) {
+      destination.update(routingHeader, value[0]);
+    }
+  }
+};
+
 exports.toJson64 = function(data) {
   const json = JSON.stringify(data);
   return Base64.encode(json);
@@ -304,15 +346,21 @@ exports.addressToObject = function(address) {
 };
 
 const extractAddress = function(source) {
-  if (typeof source === 'string') {
-    source = addressParser(source);
-  }
-
   if (Array.isArray(source)) {
     if (source.length < 1) {
       return;
     }
     source = source[0];
+  }
+
+  if (typeof source === 'string') {
+    source = addressParser(source);
+    if (Array.isArray(source)) {
+      if (source.length < 1) {
+        return;
+      }
+      source = source[0];
+    }
   }
 
   if (typeof source === 'object' && source !== null) {
@@ -325,6 +373,9 @@ const extractAddress = function(source) {
 };
 
 exports.adjustEnvelope = function(envelope) {
+  if (envelope.interface === 'bounce') {
+    return {};
+  }
   const headers = exports.headersToObject(envelope.headers);
   let from = extractAddress(headers['from']);
   const replyTo = extractAddress(headers['replyToHeader']);

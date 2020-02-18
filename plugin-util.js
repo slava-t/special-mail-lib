@@ -34,11 +34,14 @@ exports.send_email = function(plugin, from, to, eml64, options = {}) {
 };
 
 // eslint-disable-next-line camelcase
-exports.bounce_email = function(plugin, from, to, eml64, dsn) {
+exports.bounce_email = function(plugin, from, to, headers, eml64, dsn) {
   const options = {
     notes: {
       bounce: {
-        dsn
+        dsn,
+        from,
+        to,
+        headers
       }
     }
   };

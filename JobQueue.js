@@ -125,7 +125,6 @@ class JobQueue {
         if (!environment) {
           throw new Error(`Could not find and environment for ${target}`);
         }
-        //const routingConfig = this._jobOptions.routingConfig;
         url = urlJoin(environment.baseUrl, environment.notificationPostUri);
         headers = environment.notificationPostHeaders || {};
         auth = environment.notificationPostAuth;
