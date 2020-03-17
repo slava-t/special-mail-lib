@@ -244,13 +244,7 @@ module.exports = class RoutingJob {
         method: 'post',
         url,
         headers,
-        data: {
-          ...this._data,
-          transport: {
-            ...this._data.transport,
-            bounced: true
-          }
-        }
+        data: this._data
       }
     }, hashQueueName('mail-post-', url));
   }
