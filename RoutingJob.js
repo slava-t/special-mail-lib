@@ -106,7 +106,7 @@ module.exports = class RoutingJob {
       await self._routeWithCustomDomain(environment);
 
     } catch (err) {
-      console.error('Routing job error:', err);
+      console.error(`--- RoutingJob error --- ${self._logInfo}`, err);
       throw err;
     }
   }

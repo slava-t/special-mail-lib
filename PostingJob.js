@@ -45,7 +45,7 @@ module.exports = class PostingJob {
       const headersText = JSON.stringify(this._request.headers || {});
       console.error(
         `--- PostingJob error --- url: ${this._request.url} ` +
-        ` headers: ${headersText} message: ${err.message} `
+        ` headers: ${headersText} message: ${err.message} ${this._logInfo}`
       );
       throw err;
     }

@@ -58,7 +58,7 @@ module.exports = class EmailParsingJob {
         // eslint-disable-next-line no-console
         console.info(`--- EmailParsingJob queued--- ${this._logInfo}`);
       } catch (err) {
-        console.error(err);
+        console.error(`--- EmailParsingJob error--- ${this._logInfo}`, err);
         await this._queue.notify(
           email.transport.target,
           'in.queue.fail.route',

@@ -1,5 +1,4 @@
 const Address = require('address-rfc2821').Address;
-const DSN = require('haraka-dsn');
 // eslint-disable-next-line camelcase
 const {send_email} = require('./plugin-util.js');
 const {transportLogInfo} = require('./util.js');
@@ -29,8 +28,7 @@ module.exports = class ForwardingJob {
         //mailFrom.original,
         sender.original,
         mailTo.original,
-        this._item.eml64,
-        DSN.addr_bad_dest_system('Hrenogo')
+        this._item.eml64
       );
       // eslint-disable-next-line no-console
       console.info(
@@ -38,7 +36,7 @@ module.exports = class ForwardingJob {
         `${this._logInfo}`
       );
     } catch (err) {
-      console.error('Forwarding job error:', err);
+      console.error(`--- ForwardingJob error --- ${this._logInfo}`, err);
       throw err;
     }
   }

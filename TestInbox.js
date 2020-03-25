@@ -46,7 +46,9 @@ module.exports = class TestInbox {
 
     this.axios = axios.create({
       baseURL: this.apiUrl,
-      auth
+      auth,
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity
     });
   }
 
