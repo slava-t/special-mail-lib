@@ -24,6 +24,8 @@ module.exports = class PostingJob {
       method,
       headers,
       auth,
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
       data
     };
   }

@@ -123,6 +123,8 @@ module.exports = class RoutingJob {
       method: 'post',
       url: routingUrl,
       headers: environment.routingHeaders,
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
       data: self._item.transport
     });
     return requestResult.data;
