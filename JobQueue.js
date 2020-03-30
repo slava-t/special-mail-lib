@@ -11,6 +11,7 @@ class JobQueue {
     this._options = {
       ...options
     };
+    this._failHandler = options.failHandler;
     this._jobOptions = {
       ...(options.jobOptions || {}),
       queue: this
@@ -45,6 +46,7 @@ class JobQueue {
     }
 
     const item = job.data;
+    delete(item.queueOptions);
     const jobInstance = new JobClass(item, this._jobOptions, optionsField);
     await jobInstance.process();
   }
@@ -59,12 +61,12 @@ class JobQueue {
     const queuename = options.queuename || this._options.queuename || 'mail-*';
     const teamSize = options.teamSize || this._options.teamSize || 100;
     const teamConcurrency = options.teamConcurrency ||
-      this._options.teamConcurrency ||
+      self._options.teamConcurrency ||
       100;
     const newJobCheckInterval = options.newJobCheckInterval ||
-      this._options.newJobCheckInterval ||
+      self._options.newJobCheckInterval ||
       10;
-    await this._queue.subscribe(
+    await self._queue.subscribe(
       queuename,
       {
         teamSize,
@@ -75,6 +77,61 @@ class JobQueue {
         await self._processJob(job);
       }
     );
+
+    await self._queue.onComplete(
+      queuename,
+      async function(job) {
+        const item = {...job.data.request.data};
+        const queueOptions = item.queueOptions || {};
+        if (job.data.failed) {
+          let failType = 'in.job.fail.complete';
+          if (queueOptions.pushIfFail) {
+            delete queueOptions.pushIfFail;
+            const queueName = job.data.request.name;
+            self.pushItem(item, queueName);
+            failType = 'in.job.fail.partial';
+          }
+          if (self._failHandler) {
+            try {
+              await self._failHandler(failType, job);
+            } catch (err) {
+              //just log the error
+              console.error(
+                'ERROR: unexpected error occured while ' +
+                'processing a job failure',
+                err
+              );
+            }
+          }
+        }
+      }
+    );
+  }
+
+  async pushTrackedItem(item, queueName = 'mail-main') {
+    try {
+      await this._queue.publish({
+        name: queueName,
+        data: {
+          ...item,
+          queueOptions: {
+            pushIfFail: true
+          }
+        },
+        options: {
+          retryLimit: 288,
+          retryDelay: 600,
+          expireIn: '30 minutes'
+        }
+      });
+      return true;
+    } catch (err) {
+      //just log the error
+      console.error(
+        'ERROR: unexpected error occured while queueing a two staged item',
+        err
+      );
+    }
   }
 
   async pushItem(item, queueName = 'mail-main') {
@@ -83,16 +140,16 @@ class JobQueue {
         name: queueName,
         data: item,
         options: {
-          retryLimit: 192,
+          retryLimit: 288,
           retryDelay: 600,
-          expireIn: '2 days'
+          expireIn: '30 minutes'
         }
       });
       return true;
     } catch (err) {
       //just log the error.
       console.error(
-        'ERROR: unexpected error occurred while queuing the item',
+        'ERROR: unexpected error occurred while queueing an item',
         err
       );
     }

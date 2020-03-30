@@ -62,7 +62,7 @@ module.exports = class RoutingJob {
         );
 
         //just post to the res.url
-        await self._queue.pushItem({
+        await self._queue.pushTrackedItem({
           job: jobTypes.POST,
           request
         }, hashQueueName('mail-post-', res.url));
@@ -151,7 +151,7 @@ module.exports = class RoutingJob {
         },
         self._directOptions
       );
-      await self._queue.pushItem({
+      await self._queue.pushTrackedItem({
         job: jobTypes.POST,
         request
       }, hashQueueName('mail-post-', url));
@@ -240,7 +240,7 @@ module.exports = class RoutingJob {
     const url = urlJoin(environment.baseUrl, environment.emailPostUri);
     const headers = environment.emailPostHeaders;
 
-    await this._queue.pushItem({
+    await this._queue.pushTrackedItem({
       job: jobTypes.POST,
       request: {
         method: 'post',

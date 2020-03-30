@@ -21,6 +21,23 @@ exports.DIRECT_NOTIFY_URL_HEADERNAME = 'x-debuggex-direct-routing-notify-url';
 exports.DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME =
   'x-debuggex-direct-dynamic-routing-url';
 exports.JSON64_DATA_HEADERNAME = 'x-postboy-json64-data';
+exports.MOMENT_POST_URL_HEADERNAME = 'x-momentcrm-mail-post-to-url';
+exports.MOMENT_NOTIFY_URL_HEADERNAME = 'x-momentcrm-notification-post-to-url';
+exports.MOMENT_ROUTING_RESPONSE_HEADERNAME =
+  'x-momentcrm-mail-routing-response';
+
+const specialHeaders = [
+  exports.DIRECT_CONFIG_HEADERNAME,
+  exports.DIRECT_POST_URL_HEADERNAME,
+  exports.DIRECT_NOTIFY_URL_HEADERNAME,
+  exports.DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME,
+  exports.JSON64_DATA_HEADERNAME,
+  exports.MOMENT_POST_URL_HEADERNAME,
+  exports.MOMENT_NOTIFY_URL_HEADERNAME,
+  exports.MOMENT_ROUTING_RESPONSE_HEADERNAME
+];
+
+const specialHeadersSet = new Set(specialHeaders);
 
 exports.asyncWrapper = function(func) {
   return function(req, res, next) {
@@ -42,6 +59,10 @@ exports.clearInboxes = async function(inboxes) {
     errors = 0;
     throw new Error('There are errors during inboxes cleanup.');
   }
+};
+
+exports.randomHexString = function(len) {
+  return crypto.randomButes(len).toString('hex').substr(0, len);
 };
 
 exports.errorHandler = function(err, req, res, next) {
@@ -307,18 +328,22 @@ exports.headersToObject = function(headers) {
   return result;
 };
 
+exports.hasSpecialHeaders = function(mail) {
+  const headers = mail.headers || [];
+  for (const header of headers) {
+    const headername = header[0];
+    if (specialHeadersSet.has(headername.toLowerCase())) {
+      return true;
+    }
+  }
+  return false;
+};
+
 exports.copyRoutingHeaders = function(source, destination) {
-  const routingHeaders = [
-    exports.DIRECT_CONFIG_HEADERNAME,
-    exports.DIRECT_POST_URL_HEADERNAME,
-    exports.DIRECT_NOTIFY_URL_HEADERNAME,
-    exports.DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME,
-    exports.JSON64_DATA_HEADERNAME
-  ];
-  for (const routingHeader of routingHeaders) {
-    const value = source[routingHeader];
+  for (const specialHeader of specialHeaders) {
+    const value = source[specialHeader];
     if (value) {
-      destination.update(routingHeader, value[0]);
+      destination.update(specialHeader, value[0]);
     }
   }
 };
