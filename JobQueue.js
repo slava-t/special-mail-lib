@@ -119,7 +119,7 @@ class JobQueue {
           }
         },
         options: {
-          retryLimit: 288,
+          retryLimit: 3,
           retryDelay: 600,
           expireIn: '30 minutes'
         }
