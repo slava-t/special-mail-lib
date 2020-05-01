@@ -37,6 +37,15 @@ const specialHeaders = [
   exports.MOMENT_ROUTING_RESPONSE_HEADERNAME
 ];
 
+exports.normalizeEOLs = function(str, keepSingleCR = true) {
+  if (str && typeof str === 'string') {
+    const crReplacement = keepSingleCR ? '\n' : '';
+    return str.replace(/\r?\n/g, '\n').replace(/\r/g, crReplacement)
+        .replace(/\n/g, '\r\n');
+  }
+  return str;
+};
+
 const specialHeadersSet = new Set(specialHeaders);
 
 exports.asyncWrapper = function(func) {
