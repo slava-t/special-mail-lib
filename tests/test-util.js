@@ -25,3 +25,19 @@ describe('normalizeEOLs', function() {
 
 });
 
+describe('generateMessageId', function() {
+  it(
+    'should correctly generate a message derived from a domain and a prefix',
+    function() {
+      const id = util.generateMessageId('domain.com', 'test.');
+      let parts = id.split('.');
+      assert.equal('<test', parts[0]);
+      assert(/^[0-9]+$/.test(parts[1]));
+      assert.equal(parts[3], 'com>');
+      parts = parts[2].split('@');
+
+      assert(/[0-9a-f]{24}/.test(parts[0]));
+      assert.equal('domain', parts[1]);
+    }
+  );
+});

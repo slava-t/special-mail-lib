@@ -116,8 +116,8 @@ module.exports = class TestInbox {
   async waitForEmailCount(
     count,
     interval = 2000,
-    timeout = 30000,
-    initialDelay = 500
+    timeout = 90000,
+    initialDelay = 2000
   ) {
     this.cancelWaitingFlag = false;
     await sleep(initialDelay);

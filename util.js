@@ -71,7 +71,7 @@ exports.clearInboxes = async function(inboxes) {
 };
 
 exports.randomHexString = function(len) {
-  return crypto.randomButes(len).toString('hex').substr(0, len);
+  return crypto.randomBytes(len).toString('hex').substr(0, len);
 };
 
 exports.errorHandler = function(err, req, res, next) {
@@ -472,4 +472,8 @@ exports.transportLogInfo = function(transport) {
   }
 
   return `${to}${from}${id}`;
+};
+
+exports.generateMessageId = function(domain, prefix = 'id.') {
+  return `<${prefix}${Date.now()}.${exports.randomHexString(24)}@${domain}>`;
 };

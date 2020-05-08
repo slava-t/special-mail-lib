@@ -22,6 +22,10 @@ module.exports = class EmailParsingJob {
     try {
       const eml = new Buffer(this._item.eml64, 'base64');
       mail = await simpleParser(eml, {Iconv});
+      const messageId = this._item.transport['message_id'];
+      if (!mail.headers.has('message-id') && messageId) {
+        mail.headers.set('message-id', messageId);
+      }
     } catch (err) {
       console.error(err);
       await this._queue.notify(
