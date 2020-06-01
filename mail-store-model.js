@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 module.exports = function(password, options = {}) {
+
   const sequelize = new Sequelize(
     options.dbName || 'mailstore',
     options.dbUser || 'mailstore',
@@ -7,7 +8,8 @@ module.exports = function(password, options = {}) {
       dialect: 'postgres',
       host: 'localhost',
       port: 5432,
-      schema: options.schema || 'main'
+      schema: options.schema || 'main',
+      ...options
     }
   );
   const model = {
