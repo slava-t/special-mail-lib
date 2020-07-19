@@ -1,3 +1,4 @@
+const os = require('os');
 const jobClasses = require('./job-classes');
 const jobTypes = require('./job-types');
 const urlJoin = require('url-join');
@@ -201,6 +202,7 @@ class JobQueue {
         headers,
         data: {
           notificationType: type,
+          hostname: os.hostname(),
           content,
           target
         },

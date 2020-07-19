@@ -20,6 +20,7 @@ exports.DIRECT_POST_URL_HEADERNAME = 'x-debuggex-direct-routing-post-url';
 exports.DIRECT_NOTIFY_URL_HEADERNAME = 'x-debuggex-direct-routing-notify-url';
 exports.DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME =
   'x-debuggex-direct-dynamic-routing-url';
+exports.JSON64_DIRECT_MX_HEADERNAME = 'x-debuggex-json64-direct-mx';
 exports.JSON64_DIRECT_MX = 'x-debuggex-json64-direct-mx';
 exports.JSON64_DATA_HEADERNAME = 'x-postboy-json64-data';
 exports.MOMENT_POST_URL_HEADERNAME = 'x-momentcrm-mail-post-to-url';
@@ -32,6 +33,7 @@ const specialHeaders = [
   exports.DIRECT_POST_URL_HEADERNAME,
   exports.DIRECT_NOTIFY_URL_HEADERNAME,
   exports.DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME,
+  exports.JSON64_DIRECT_MX_HEADERNAME,
   exports.JSON64_DATA_HEADERNAME,
   exports.MOMENT_POST_URL_HEADERNAME,
   exports.MOMENT_NOTIFY_URL_HEADERNAME,
@@ -408,7 +410,7 @@ const extractAddress = function(source) {
 };
 
 exports.getMxFromHeaders = function(headers) {
-  const mxHeader = headers[exports.JSON64_DIRECT_MX];
+  const mxHeader = headers[exports.JSON64_DIRECT_MX_HEADERNAME];
   if (mxHeader) {
     return exports.fromJson64(mxHeader[0]);
   }
