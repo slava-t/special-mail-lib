@@ -41,3 +41,85 @@ describe('generateMessageId', function() {
     }
   );
 });
+
+describe('randomAlphanumeric', function() {
+  it(
+    'should coorrectly generate a  stringof lenggh 0',
+    function() {
+      assert.equal('', util.randomAlphanumeric(0));
+    }
+  );
+
+  it(
+    'should generate an alphanumeric string of right length',
+    function() {
+      const alphanumeric = util.randomAlphanumeric(2048);
+      assert.equal(alphanumeric.length, 2048);
+      alphanumeric.replace(/[a-zA-Z0-9]/g, '');
+      assert.equal(alphanumeric.replace(/[a-zA-Z0-9]/g, ''), '');
+    }
+  );
+
+  it(
+    'should get different strings when called twice',
+    function() {
+      const a1 = util.randomAlphanumeric();
+      const a2 = util.randomAlphanumeric();
+      assert.notEqual(a1, a2);
+    }
+  );
+
+  it(
+    'should regenerate th string if it has to many non-alphanumeric chars',
+    function() {
+      let count = 0;
+      const rnd = function() {
+        count++;
+        if (count < 20) {
+          const result = Buffer.from(
+            '++++abcd////++++////++++////++++', 'base64'
+          );
+          return result;
+        }
+        return Buffer.from('0123456+/90123456789012345678901', 'base64');
+      };
+      const a = util.randomAlphanumeric(24, rnd);
+      assert.equal(a, '012345690123456789012345');
+      assert.equal(count, 20);
+    }
+  );
+});
+
+describe('generateGuid', function() {
+  it('should correctly generate a guid', function() {
+    const g = util.generateGuid('test_', 16);
+    assert.equal(g.length, 21);
+    assert.equal(g.substr(0, 5), 'test_');
+  });
+});
+
+describe('generateEmailGuid', function() {
+  it('should correctly generate an email guid', function() {
+    const g1 = util.generateEmailGuid({}, {}, {}, 'test_', 24);
+    assert.equal(g1, 'test_Ze5Ju8y944cXonU1fNUA1Zo1');
+    const g2 = util.generateEmailGuid(
+      {
+        user: 'fu',
+        host: 'fh'
+      },
+      {
+        user: 'tu',
+        host: 'th',
+      },
+      {
+        'message-id': ['test-id'],
+        'from': ['h@h'],
+        'to': ['t1@a', 't2@a'],
+        'subject': 'test-subject'
+      },
+      'test_',
+      24
+    );
+    assert.equal(g2, 'test_iLYWvC1iH6z44aVtTrOUQZhl');
+  });
+});

@@ -75,6 +75,18 @@ exports.randomHexString = function(len) {
   return crypto.randomBytes(len).toString('hex').substr(0, len);
 };
 
+exports.randomAlphanumeric = function(
+  len = 24,
+  randomFunc = crypto.randomBytes
+) {
+  const result = randomFunc(len).toString('base64')
+      .replace(/[/+]/g, '').substr(0, len);
+  if (result.length === len) {
+    return result;
+  }
+  return exports.randomAlphanumeric(len, randomFunc);
+};
+
 exports.errorHandler = function(err, req, res, next) {
   if (res.headersSent) {
     return next(err);
@@ -481,6 +493,56 @@ exports.transportLogInfo = function(transport) {
 
   return `${to}${from}${id}`;
 };
+
+exports.generateGuid = function(prefix = 'email_', len = 24) {
+  const r = exports.randomAlphanumeric(len).replace('I', 'T').replace('l', 'L');
+  return prefix.toString() + r;
+};
+
+const getRelaxedHeaderLine = function(headers, headerName) {
+  let headerValues = headers[headerName] || [];
+  if (!Array.isArray(headerValues)) {
+    headerValues = [headerValues];
+  }
+  const cleanHeaderValues = headerValues.map(
+    x => x.replace(/\r?\n/g, '').replace(/\r?\n/g, '').trim()
+  );
+  return headerName.toLowerCase().trim() + ': ' +
+    cleanHeaderValues.join('\r\n');
+};
+
+exports.generateEmailGuid = function(
+  from,
+  to,
+  headers,
+  prefix = 'email_',
+  len = 24
+) {
+  const lines = ['from-user: ' + (from.user || '')];
+  lines.push('from-host: ' + (from.host || ''));
+  lines.push('to-user: ' + (to.user || ''));
+  lines.push('to-host: ' + (to.host || ''));
+
+  for (const headerName of ['message-id', 'from', 'to', 'subject']) {
+    lines.push(getRelaxedHeaderLine(headers, headerName));
+  }
+
+  const buffer = Buffer.from(
+    lines.join('\r\n') + '\r\n',
+    'binary'
+  );
+
+  return prefix + crypto.createHash('sha512')
+      .update(buffer)
+      .digest('base64')
+      .replace(/[/+=]/g, '')
+      .replace('I', 'T')
+      .replace('l', 'L')
+      .substr(0, len)
+      .padEnd(len, 'd');
+};
+
+
 
 exports.generateMessageId = function(domain, prefix = 'id.') {
   return `<${prefix}${Date.now()}.${exports.randomHexString(24)}@${domain}>`;
