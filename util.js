@@ -26,6 +26,7 @@ exports.MOMENT_POST_URL_HEADERNAME = 'x-momentcrm-mail-post-to-url';
 exports.MOMENT_NOTIFY_URL_HEADERNAME = 'x-momentcrm-notification-post-to-url';
 exports.MOMENT_ROUTING_RESPONSE_HEADERNAME =
   'x-momentcrm-mail-routing-response';
+exports.GUID_HEADERNAME = 'x-debuggex-guid';
 
 const specialHeaders = [
   exports.DIRECT_CONFIG_HEADERNAME,
@@ -38,6 +39,10 @@ const specialHeaders = [
   exports.MOMENT_ROUTING_RESPONSE_HEADERNAME
 ];
 
+const routingHeaders = [
+  ...specialHeaders,
+  exports.GUID_HEADERNAME
+];
 exports.normalizeEOLs = function(str, keepSingleCR = true) {
   if (str && typeof str === 'string') {
     const crReplacement = keepSingleCR ? '\n' : '';
@@ -362,10 +367,10 @@ exports.hasSpecialHeaders = function(mail) {
 };
 
 exports.copyRoutingHeaders = function(source, destination) {
-  for (const specialHeader of specialHeaders) {
-    const value = source[specialHeader];
+  for (const routingHeader of routingHeaders) {
+    const value = source[routingHeader];
     if (value) {
-      destination.update(specialHeader, value[0]);
+      destination.update(routingHeader, value[0]);
     }
   }
 };
@@ -473,6 +478,45 @@ exports.envelopeToTransport = function(envelope) {
     'rcpt_to': to,
     headers: exports.headersToObject(envelope.headers)
   };
+};
+
+exports.extractGuidFromHeaders = function(headers) {
+  if (!headers) {
+    return;
+  }
+  const guidHeader = headers[exports.GUID_HEADERNAME];
+  if (guidHeader) {
+    if (Array.isArray(guidHeader) && guidHeader.length == 1) {
+      return guidHeader[0];
+    } else if (typeof guidHeader === 'string') {
+      return guidHeader;
+    }
+  }
+};
+
+exports.extractGuid = function(content) {
+  if (!content) {
+    return;
+  }
+
+  if (content.guid) {
+    return content.guid;
+  }
+
+  const transport = content.transport;
+  if (!transport) {
+    return;
+  }
+
+  if (transport.guid) {
+    return transport.guid;
+  }
+
+  const target = transport.target;
+  if (target && target.guid) {
+    return target.guid;
+  }
+  return exports.extractGuidFromHeaders(transport.headers);
 };
 
 exports.transportLogInfo = function(transport) {

@@ -3,7 +3,8 @@ const jobTypes = require('./job-types');
 const urlJoin = require('url-join');
 const {
   getEnvironment,
-  allPromises
+  allPromises,
+  extractGuid
 } = require('./util');
 
 class JobQueue {
@@ -155,7 +156,7 @@ class JobQueue {
     }
   }
 
-  async notify(target, type, content, options = {}) {
+  async notify(target, type, content, options = {}, guid) {
     try {
       if (Array.isArray(target)) {
         return this._notifyAll(target, type, content, options);
@@ -165,8 +166,16 @@ class JobQueue {
       } else {
         target = target.host;
       }
+
       if (!target) {
         throw new Error(`Invalid notification target: ${target}`);
+      }
+      if (!guid) {
+        guid = extractGuid(content);
+      }
+
+      if (!guid) {
+        throw new Error('No guid provided for notification');
       }
 
       let url;
@@ -201,6 +210,7 @@ class JobQueue {
         headers,
         data: {
           notificationType: type,
+          guid,
           content,
           target
         },
@@ -221,7 +231,8 @@ class JobQueue {
       x.host,
       type,
       content,
-      options
+      options,
+      x.guid
     ));
 
     await allPromises(promises);

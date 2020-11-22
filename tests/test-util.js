@@ -123,3 +123,35 @@ describe('generateEmailGuid', function() {
     assert.equal(g2, 'test_iLYWvC1iH6z44aVtTrOUQZhl');
   });
 });
+
+describe('extractGuid', function() {
+  it('should correctly extract guid', function() {
+    assert(!util.extractGuid());
+    assert(!util.extractGuid({}));
+    assert.equal('g1', util.extractGuid({guid: 'g1'}));
+    assert.equal('g2', util.extractGuid({
+      transport: {guid: 'g2'}
+    }));
+    assert(!util.extractGuid({transport: {}}));
+    assert(!util.extractGuid({transport: {target: {}}}));
+    assert.equal('g3', util.extractGuid({transport: {target: {
+      guid: 'g3'
+    }}}));
+    assert(!util.extractGuid({transport: {headers: {}}}));
+    assert(!util.extractGuid({transport: {headers: {
+      [util.GUID_HEADERNAME]: 5
+    }}}));
+    assert(!util.extractGuid({transport: {headers: {
+      [util.GUID_HEADERNAME]: []
+    }}}));
+    assert(!util.extractGuid({transport: {headers: {
+      [util.GUID_HEADERNAME]: ['a', 'b']
+    }}}));
+    assert.equal('g4', util.extractGuid({transport: {headers: {
+      [util.GUID_HEADERNAME]: ['g4']
+    }}}));
+    assert.equal('g5', util.extractGuid({transport: {headers: {
+      [util.GUID_HEADERNAME]: 'g5'
+    }}}));
+  });
+});
