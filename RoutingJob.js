@@ -139,7 +139,9 @@ module.exports = class RoutingJob {
       '--- RoutingJob dynamic routing --- routingInfo: ' +
       `${JSON.stringify(routingInfo)} ${self._logInfo}`
     );
+    let ignore = true;
     if (routingInfo.post) {
+      ignore = false;
       const url = urlJoin(environment.baseUrl, environment.emailPostUri);
       const headers = environment.emailPostHeaders;
       const request = getDirectPostRequestRouting(
@@ -170,14 +172,18 @@ module.exports = class RoutingJob {
       );
     }
     if (routingInfo.forward) {
+      ignore = false;
       await self._queue.pushItem({
         ...self._item,
         job: jobTypes.FORWARD
       }, 'mail-forward');
 
+      const forwardingType =
+          routingInfo.post ? 'in.queue.forward' : 'in.queue.forward.close';
+
       await self._queue.notify(
         self._targetDomain,
-        'in.queue.forward',
+        forwardingType,
         {transport: self._item.transport},
         getDirectNotifyRequestRouting(self._directOptions)
       );
@@ -188,6 +194,7 @@ module.exports = class RoutingJob {
       );
     }
     if (!(routingInfo.post || routingInfo.forward) && routingInfo.bounce) {
+      ignore = false;
       // eslint-disable-next-line no-console
       console.info(
         '--- RoutingJob dynamic routing start bouncing ---' +
@@ -197,6 +204,19 @@ module.exports = class RoutingJob {
       await self._queue.notify(
         self._targetDomain,
         'in.queue.bounce',
+        {transport: self._item.transport},
+        getDirectNotifyRequestRouting(self._directOptions)
+      );
+    }
+    if (ignore) {
+      // eslint-disable-next-line no-console
+      console.info(
+        '--- RoutingJob dynamic routing ignoring ---' +
+        `${this._logInfo}`
+      );
+      await self._queue.notify(
+        self._targetDomain,
+        'in.ignore',
         {transport: self._item.transport},
         getDirectNotifyRequestRouting(self._directOptions)
       );

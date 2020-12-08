@@ -174,10 +174,6 @@ class JobQueue {
         guid = extractGuid(content);
       }
 
-      if (!guid) {
-        throw new Error('No guid provided for notification');
-      }
-
       let url;
       let headers = {};
       let auth;
