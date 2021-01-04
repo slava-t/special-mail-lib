@@ -2,10 +2,12 @@ const simpleParser = require('mailparser').simpleParser;
 const Iconv = require('iconv').Iconv;
 const EmailSorter = require('./EmailSorter');
 const jobTypes = require('./job-types.js');
+const {getLogger} = require('./logger.js');
 const {getDirectNotifyRequestRouting, transportLogInfo} = require('./util.js');
 
 module.exports = class EmailParsingJob {
   constructor(item, options) {
+    this._logger = getLogger(options);
     this._item = item;
     this._plugin = options.plugin;
     this._queue = options.queue;
@@ -27,7 +29,11 @@ module.exports = class EmailParsingJob {
         mail.headers.set('message-id', messageId);
       }
     } catch (err) {
-      console.error(err);
+      this._logger.error(
+        'An error occurred while parsing the email',
+        this._logInfo,
+        err
+      );
       await this._queue.notify(
         transport['rcpt_to'],
         'in.job.parse.fail.parse',
@@ -37,8 +43,10 @@ module.exports = class EmailParsingJob {
       return;
     }
 
-    // eslint-disable-next-line no-console
-    console.info(`--- EmailParsingJob parsed--- ${this._logInfo}`);
+    this._logger.info(
+      '--- EmailParsingJob parsed---',
+      this._logInfo
+    );
 
     const sorter = new EmailSorter(this._item, mail);
     const emails = sorter.getSortedOutEmails();
@@ -59,10 +67,15 @@ module.exports = class EmailParsingJob {
           this._notifyOptions
         );
 
-        // eslint-disable-next-line no-console
-        console.info(`--- EmailParsingJob queued--- ${this._logInfo}`);
+        this._logger.info(
+          '--- EmailParsingJob queued---',
+          transportLogInfo(email.transport)
+        );
       } catch (err) {
-        console.error(`--- EmailParsingJob error--- ${this._logInfo}`, err);
+        this._logger.error(
+          `--- EmailParsingJob error--- ${transportLogInfo(this._logInfo)}`,
+          err
+        );
         await this._queue.notify(
           email.transport.target,
           'in.queue.fail.route',

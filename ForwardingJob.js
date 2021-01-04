@@ -1,10 +1,12 @@
 const Address = require('address-rfc2821').Address;
+const {getLogger} = require('./logger.js');
 // eslint-disable-next-line camelcase
 const {send_email} = require('./plugin-util.js');
 const {transportLogInfo} = require('./util.js');
 
 module.exports = class ForwardingJob {
   constructor(item, options) {
+    this._logger = getLogger(options);
     this._plugin = options.plugin;
     this._srs = options.srs;
     this._item = item;
@@ -15,14 +17,22 @@ module.exports = class ForwardingJob {
     try {
       const mailFrom = this._item.transport.mail_from;
       const mailTo = this._item.transport.target;
-      // eslint-disable-next-line no-console
-      console.info(`--- ForwardingJob start --- ${this._logInfo}`);
+      this._logger.info(
+        '--- ForwardingJob start ---',
+        this._logInfo
+      );
       const sender = new Address(
         this._srs.rewrite(mailFrom.user, mailFrom.host),
         'mailtest.momentcrm.com'
       );
-      // eslint-disable-next-line no-console
-      console.info('--forwarding email-- sender=', sender.original);
+      this._logger.info(
+        '--- ForwardingJob got sender ---',
+        {
+          sender: sender.original,
+          ...this._logInfo,
+        }
+      );
+
       await send_email(
         this._plugin,
         //mailFrom.original,
@@ -30,13 +40,12 @@ module.exports = class ForwardingJob {
         mailTo.original,
         this._item.eml64
       );
-      // eslint-disable-next-line no-console
-      console.info(
-        `--- ForwardingJob done --- sender: ${sender.original}` +
-        `${this._logInfo}`
+      this._logger.info(
+        '--- ForwardingJob done ---',
+        this._logInfo
       );
     } catch (err) {
-      console.error(`--- ForwardingJob error --- ${this._logInfo}`, err);
+      this._logger.error(`--- ForwardingJob error --- ${this._logInfo}`, err);
       throw err;
     }
   }

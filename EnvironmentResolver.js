@@ -1,8 +1,13 @@
+const {getLogger} = require('./logger.js');
+
 module.exports = class EnvironmentResolver {
   constructor(routingConfig) {
+    this._logger = getLogger();
     this._routes = [];
-    // eslint-disable-next-line no-console
-    console.info('--EnvironmentResolver-- routes=', routingConfig.routes);
+    this._logger.info(
+      '--EnvironmentResolver instantiation--',
+      {routes: routingConfig.routes}
+    );
     for (const route of routingConfig.routes || []) {
       if (!route.env) {
         throw new Error('A route without an environment found');

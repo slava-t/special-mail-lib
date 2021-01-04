@@ -1,6 +1,9 @@
 const createModel = require('./mail-store-model.js');
+const {getLogger} = require('./logger.js');
+
 module.exports = class MailStore {
   constructor(model) {
+    this.logger = getLogger();
     this.model = model;
     this.cleanUpIntervalId = null;
   }
@@ -164,10 +167,10 @@ module.exports = class MailStore {
             await t.rollback();
           }
         } catch (e) {
-          console.error('Rolling back transaction after error failed', e);
+          this.logger.error('Rolling back transaction after error failed', e);
         }
         if (!err.original || err.original.code !== '40001') {
-          console.error('Transaciton failed', err);
+          this.logger.error('Transaciton failed', err);
           throw err;
         }
 
@@ -195,11 +198,15 @@ module.exports = class MailStore {
         const beforeDate = new Date(Date.now() - lifetime);
         const result = await self.deleteAllBefore(beforeDate);
         if (result) {
-          // eslint-disable-next-line no-console
-          console.info(`Cleaning up process: Deleted ${result} emails.`);
+          self.logger.info(
+            `Cleaning up process: Deleted ${result} emails.`
+          );
         }
       } catch (err) {
-        console.error('An error occurred while cleaning up old emails.', err);
+        this.logger.error(
+          'An error occurred while cleaning up old emails.',
+          err
+        );
       }
     }, interval);
   }

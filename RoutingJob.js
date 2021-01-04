@@ -2,6 +2,7 @@ const axios = require('axios');
 const Address = require('address-rfc2821').Address;
 const urlJoin = require('url-join');
 const jobTypes = require('./job-types.js');
+const {getLogger} = require('./logger.js');
 const {
   DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME,
   hashQueueName,
@@ -17,6 +18,7 @@ const DSN = require('haraka-dsn');
 
 module.exports = class RoutingJob {
   constructor(item, options) {
+    this._logger = getLogger(options);
     this._options = options;
     this._queue = options.queue;
     this._plugin = options.plugin;
@@ -41,14 +43,13 @@ module.exports = class RoutingJob {
     const self = this;
 
     try {
-      // eslint-disable-next-line no-console
-      console.info(`--- RoutingJob start--- ${self._logInfo}`);
+      self._logger.info('--- RoutingJob start--- ', self._logInfo);
 
       const res = self._resolver.createUrl(self._targetDomain);
       if (res && res.index >= 0) {
-        // eslint-disable-next-line no-console
-        console.info(
-          `--- RoutingJob static routing start --- ${self._logInfo}`
+        self._logger.info(
+          '--- RoutingJob static routing start ---',
+          self._logInfo
         );
 
         let request = getDirectPostRequestRouting(
@@ -73,17 +74,17 @@ module.exports = class RoutingJob {
           {transport: self._item.transport},
           getDirectNotifyRequestRouting(self._directOptions)
         );
-        // eslint-disable-next-line no-console
-        console.info(
-          '--- RoutingJob static routing queued for posting ---' +
-          `url: ${request.url} ${this._logInfo}`
+        self._logger.info(
+          '--- RoutingJob static routing queued for posting ---',
+          {url: request.url, ...self._logInfo}
         );
 
         return;
       }
-      // eslint-disable-next-line no-console
-      console.info(
-        `--- RoutingJob dynamic routing start --- ${self._logInfo}`
+
+      self._logger.info(
+        '--- RoutingJob dynamic routing start ---',
+        self._logInfo
       );
 
       const environment = getEnvironment(
@@ -106,7 +107,10 @@ module.exports = class RoutingJob {
       await self._routeWithCustomDomain(environment);
 
     } catch (err) {
-      console.error(`--- RoutingJob error --- ${self._logInfo}`, err);
+      self._logger.error(
+        `--- RoutingJob error --- ${self._logInfo}`,
+        err
+      );
       throw err;
     }
   }
@@ -134,10 +138,9 @@ module.exports = class RoutingJob {
     const self = this;
 
     const routingInfo = await self._fetchRoutingInfo(environment);
-    // eslint-disable-next-line no-console
-    console.info(
-      '--- RoutingJob dynamic routing --- routingInfo: ' +
-      `${JSON.stringify(routingInfo)} ${self._logInfo}`
+    self._logger.info(
+      '--- RoutingJob dynamic routing ---',
+      {routingInfo, ...self._logInfo}
     );
     let ignore = true;
     if (routingInfo.post) {
@@ -165,10 +168,9 @@ module.exports = class RoutingJob {
         getDirectNotifyRequestRouting(self._directOptions)
       );
 
-      // eslint-disable-next-line no-console
-      console.info(
-        '--- RoutingJob dynamic routing queued for posting ---' +
-        `url: ${request.url} ${this._logInfo}`
+      self._logger.info(
+        '--- RoutingJob dynamic routing queued for posting ---',
+        {url: request.url, ...self._logInfo}
       );
     }
     if (routingInfo.forward) {
@@ -187,18 +189,16 @@ module.exports = class RoutingJob {
         {transport: self._item.transport},
         getDirectNotifyRequestRouting(self._directOptions)
       );
-      // eslint-disable-next-line no-console
-      console.info(
-        '--- RoutingJob dynamic routing queued for forwarding ---' +
-        `${this._logInfo}`
+      self._logger.info(
+        '--- RoutingJob dynamic routing queued for forwarding ---',
+        self._logInfo
       );
     }
     if (!(routingInfo.post || routingInfo.forward) && routingInfo.bounce) {
       ignore = false;
-      // eslint-disable-next-line no-console
-      console.info(
-        '--- RoutingJob dynamic routing start bouncing ---' +
-        `${this._logInfo}`
+      self._logger.info(
+        '--- RoutingJob dynamic routing start bouncing ---',
+        self._logInfo
       );
       await self._bounceUnauthorized();
       await self._queue.notify(
@@ -209,10 +209,9 @@ module.exports = class RoutingJob {
       );
     }
     if (ignore) {
-      // eslint-disable-next-line no-console
-      console.info(
-        '--- RoutingJob dynamic routing ignoring ---' +
-        `${this._logInfo}`
+      self._logger.info(
+        '--- RoutingJob dynamic routing ignoring ---',
+        self._logInfo
       );
       await self._queue.notify(
         self._targetDomain,
@@ -246,7 +245,7 @@ module.exports = class RoutingJob {
     try {
       srsReverseValue = this._plugin.srs.reverse(this._mailTo.user);
     } catch (err) {
-      console.error(err);
+      this._logger.error(err, this._logInfo);
     }
     if (srsReverseValue) {
       await send_email(

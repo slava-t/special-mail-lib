@@ -12,8 +12,11 @@ const streamBuffers = require('stream-buffers');
 
 const EnvironmentResolver = require('./EnvironmentResolver');
 const DomainNameResolver = require('./DomainNameResolver');
+const {getLogger} = require('./logger.js');
 
 const asyncReadFile = util.promisify(fs.readFile);
+
+const logger = getLogger();
 
 exports.DIRECT_CONFIG_HEADERNAME = 'x-debuggex-direct-routing-config';
 exports.DIRECT_POST_URL_HEADERNAME = 'x-debuggex-direct-routing-post-url';
@@ -67,7 +70,7 @@ exports.clearInboxes = async function(inboxes) {
     try {
       await inbox.clear();
     } catch (err) {
-      console.error(err);
+      logger.error(err);
     }
   }
   if (errors) {
@@ -166,6 +169,45 @@ exports.getDkim = async function(dir, domain, config, defaultDkim = false) {
     domain: dkimDomain,
     value: value.trim()
   };
+};
+
+let nonce = 0;
+exports.saveEmail = function(baseDir, eml, transport, moreData = {}) {
+  try {
+    const toDir = transport['rcpt_to'].map(a => a.host).join('_') ||
+      'invalid';
+    const fromDir = transport['mail_from'].host || 'bounced';
+    const now = new Date().toISOString();
+    const dateDir = now.substr(0, 10);
+    const baseFileName = now.substr(11).replace(/:/g, '_') + '-' + ++nonce;
+    const targetDir = path.join(
+      baseDir,
+      dateDir,
+      fromDir,
+      toDir
+    );
+    fs.mkdirSync(targetDir, {recursive: true});
+
+    const jsonPath = path.join(targetDir, baseFileName + '.json');
+    const emlPath = path.join(targetDir, baseFileName + '.eml');
+    const jsonData = {
+      ...moreData,
+      //dkimDir: delivery.dkimDir,
+      transport
+    };
+    fs.writeFileSync(
+      jsonPath,
+      JSON.stringify(jsonData, null, 2)
+    );
+    if (eml) {
+      fs.writeFileSync(
+        emlPath,
+        eml
+      );
+    }
+  } catch (err) {
+    logger.error('Fail to save email.', err);
+  }
 };
 
 exports.dnsResolve = function(hostname, recordType, timeout = 20000) {
@@ -494,7 +536,7 @@ exports.extractGuidFromHeaders = function(headers) {
   }
 };
 
-exports.extractGuid = function(content) {
+exports.extractGuid = function(content, fromHeaders = true) {
   if (!content) {
     return;
   }
@@ -516,26 +558,32 @@ exports.extractGuid = function(content) {
   if (target && target.guid) {
     return target.guid;
   }
-  return exports.extractGuidFromHeaders(transport.headers);
+  if (fromHeaders) {
+    return exports.extractGuidFromHeaders(transport.headers);
+  }
 };
 
-exports.transportLogInfo = function(transport) {
+exports.transportLogInfo = function(transport, guidFromHeaders = true) {
   if (!transport) {
     return '';
   }
 
   const toAddressObjects = transport.target ?
     [transport.target] : (transport.rcpt_to || []);
-  const toAddresses = toAddressObjects.map(a=>a.original).join(',');
-  const to = `to: [${toAddresses}]`;
+  const to = toAddressObjects.map(a=>a.original).join(',');
   const from = transport.mail_from ?
     ` from: ${transport.mail_from.original}` : '';
   let id = '';
   if (transport.headers && transport.headers['message-id']) {
     id = ` id: ${transport.headers['message-id'][0]}`;
   }
-
-  return `${to}${from}${id}`;
+  const guid = exports.extractGuid({transport}, guidFromHeaders);
+  return {
+    id,
+    guid,
+    to,
+    from
+  };
 };
 
 exports.generateGuid = function(prefix = 'email_', len = 24) {

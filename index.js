@@ -12,5 +12,6 @@ module.exports = {
   TestInbox: require('./TestInbox'),
   jobTypes: require('./job-types'),
   ...require('./util.js'),
-  ...require('./JobQueue.js')
+  ...require('./JobQueue.js'),
+  ...require('./logger.js')
 };

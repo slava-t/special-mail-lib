@@ -1,5 +1,6 @@
 const jobClasses = require('./job-classes');
 const jobTypes = require('./job-types');
+const {getLogger} = require('./logger');
 const urlJoin = require('url-join');
 const {
   getEnvironment,
@@ -12,8 +13,10 @@ class JobQueue {
     this._options = {
       ...options
     };
+    this._logger = getLogger(this._options);
     this._failHandler = options.failHandler;
     this._jobOptions = {
+      logger: this._logger,
       ...(options.jobOptions || {}),
       queue: this
     };
@@ -36,13 +39,13 @@ class JobQueue {
 
   async _processJob(job) {
     if (!job.data) {
-      console.error('Invalid job: no data field in the job');
+      this._logger.error('Invalid job: no data field in the job');
       return;
     }
     const {JobClass, optionsField} = this._jobClasses[job.data.job];
 
     if (!JobClass) {
-      console.error('Invalid job type: ', job.data);
+      this._logger.error('Invalid job type: ', job.data);
       return;
     }
 
@@ -97,7 +100,7 @@ class JobQueue {
               await self._failHandler(failType, job);
             } catch (err) {
               //just log the error
-              console.error(
+              self._logger.error(
                 'ERROR: unexpected error occured while ' +
                 'processing a job failure',
                 err
@@ -128,7 +131,7 @@ class JobQueue {
       return true;
     } catch (err) {
       //just log the error
-      console.error(
+      this._logger(
         'ERROR: unexpected error occured while queueing a two staged item',
         err
       );
@@ -149,7 +152,7 @@ class JobQueue {
       return true;
     } catch (err) {
       //just log the error.
-      console.error(
+      this._logger(
         'ERROR: unexpected error occurred while queueing an item',
         err
       );
@@ -197,10 +200,7 @@ class JobQueue {
         headers = options.directNotificationHeaders;
         auth = options.directNotificationAuth;
       }
-      // eslint-disable-next-line no-console
-      console.info(
-        `--- JobQueue notify request ready --- url: ${url} target: ${target}`
-      );
+      this._logger.info('--- JobQueue notify request ready ---', {url, target});
       const request = {
         url,
         headers,
@@ -217,7 +217,7 @@ class JobQueue {
         request
       }, 'mail-notify');
     } catch (err) {
-      console.error(`Notifying ${target} failed`, err);
+      this._logger.error(`Notifying ${target} failed`, err);
     }
   }
 
