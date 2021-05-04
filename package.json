@@ -32,6 +32,7 @@
     "mailparser": "3.2.0",
     "merge": "2.1.1",
     "pg-boss": "5.2.3",
+    "pg-native": "2.2.0",
     "sequelize": "6.6.2",
     "sleep-promise": "9.1.0",
     "spf-check": "0.4.3",
