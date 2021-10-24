@@ -18,35 +18,36 @@ const asyncReadFile = util.promisify(fs.readFile);
 
 const logger = getLogger();
 
-exports.DIRECT_CONFIG_HEADERNAME = 'x-debuggex-direct-routing-config';
-exports.DIRECT_POST_URL_HEADERNAME = 'x-debuggex-direct-routing-post-url';
-exports.DIRECT_NOTIFY_URL_HEADERNAME = 'x-debuggex-direct-routing-notify-url';
-exports.DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME =
+const DIRECT_CONFIG_HEADERNAME = 'x-debuggex-direct-routing-config';
+const DIRECT_POST_URL_HEADERNAME = 'x-debuggex-direct-routing-post-url';
+const DIRECT_NOTIFY_URL_HEADERNAME = 'x-debuggex-direct-routing-notify-url';
+const DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME =
   'x-debuggex-direct-dynamic-routing-url';
-exports.JSON64_DIRECT_MX = 'x-debuggex-json64-direct-mx';
-exports.JSON64_DATA_HEADERNAME = 'x-postboy-json64-data';
-exports.MOMENT_POST_URL_HEADERNAME = 'x-momentcrm-mail-post-to-url';
-exports.MOMENT_NOTIFY_URL_HEADERNAME = 'x-momentcrm-notification-post-to-url';
-exports.MOMENT_ROUTING_RESPONSE_HEADERNAME =
+const JSON64_DIRECT_MX = 'x-debuggex-json64-direct-mx';
+const JSON64_DATA_HEADERNAME = 'x-postboy-json64-data';
+const MOMENT_POST_URL_HEADERNAME = 'x-momentcrm-mail-post-to-url';
+const MOMENT_NOTIFY_URL_HEADERNAME = 'x-momentcrm-notification-post-to-url';
+const MOMENT_ROUTING_RESPONSE_HEADERNAME =
   'x-momentcrm-mail-routing-response';
-exports.GUID_HEADERNAME = 'x-debuggex-guid';
+const GUID_HEADERNAME = 'x-debuggex-guid';
 
 const specialHeaders = [
-  exports.DIRECT_CONFIG_HEADERNAME,
-  exports.DIRECT_POST_URL_HEADERNAME,
-  exports.DIRECT_NOTIFY_URL_HEADERNAME,
-  exports.DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME,
-  exports.JSON64_DATA_HEADERNAME,
-  exports.MOMENT_POST_URL_HEADERNAME,
-  exports.MOMENT_NOTIFY_URL_HEADERNAME,
-  exports.MOMENT_ROUTING_RESPONSE_HEADERNAME
+  DIRECT_CONFIG_HEADERNAME,
+  DIRECT_POST_URL_HEADERNAME,
+  DIRECT_NOTIFY_URL_HEADERNAME,
+  DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME,
+  JSON64_DATA_HEADERNAME,
+  MOMENT_POST_URL_HEADERNAME,
+  MOMENT_NOTIFY_URL_HEADERNAME,
+  MOMENT_ROUTING_RESPONSE_HEADERNAME
 ];
 
 const routingHeaders = [
   ...specialHeaders,
-  exports.GUID_HEADERNAME
+  GUID_HEADERNAME
 ];
-exports.normalizeEOLs = function(str, keepSingleCR = true) {
+
+const normalizeEOLs = function(str, keepSingleCR = true) {
   if (str && typeof str === 'string') {
     const crReplacement = keepSingleCR ? '\n' : '';
     return str.replace(/\r?\n/g, '\n').replace(/\r/g, crReplacement)
@@ -57,13 +58,13 @@ exports.normalizeEOLs = function(str, keepSingleCR = true) {
 
 const specialHeadersSet = new Set(specialHeaders);
 
-exports.asyncWrapper = function(func) {
+const asyncWrapper = function(func) {
   return function(req, res, next) {
     Promise.resolve(func(req, res, next)).catch(next);
   };
 };
 
-exports.clearInboxes = async function(inboxes) {
+const clearInboxes = async function(inboxes) {
   let errors = 0;
   while (inboxes.length) {
     const inbox = inboxes.pop();
@@ -79,11 +80,11 @@ exports.clearInboxes = async function(inboxes) {
   }
 };
 
-exports.randomHexString = function(len) {
+const randomHexString = function(len) {
   return crypto.randomBytes(len).toString('hex').substr(0, len);
 };
 
-exports.randomAlphanumeric = function(
+const randomAlphanumeric = function(
   len = 24,
   randomFunc = crypto.randomBytes
 ) {
@@ -92,10 +93,10 @@ exports.randomAlphanumeric = function(
   if (result.length === len) {
     return result;
   }
-  return exports.randomAlphanumeric(len, randomFunc);
+  return randomAlphanumeric(len, randomFunc);
 };
 
-exports.errorHandler = function(err, req, res, next) {
+const errorHandler = function(err, req, res, next) {
   if (res.headersSent) {
     return next(err);
   }
@@ -111,17 +112,17 @@ exports.errorHandler = function(err, req, res, next) {
   });
 };
 
-exports.ok = function(res, result) {
+const ok = function(res, result) {
   res.status(200).send({success: true, result});
 };
 
-exports.hashQueueName = function(base, index) {
+const hashQueueName = function(base, index) {
   return base + crypto.createHash('md5').update(
     index.toString()
   ).digest('hex')[0];
 };
 
-exports.parseRoutingConfig = function(data) {
+const parseRoutingConfig = function(data) {
   const combine = function(commonField, sourceField) {
     const source = data[sourceField] || {};
     const common = data[commonField] || {};
@@ -142,7 +143,7 @@ exports.parseRoutingConfig = function(data) {
 };
 
 
-exports.getDomainHashKey = function(domain, len = 2) {
+const getDomainHashKey = function(domain, len = 2) {
   const normalizedDomain = domain.toLowerCase().replace(/\./g, ' ').trim();
   const hash = crypto.createHash('sha256').update(
     normalizedDomain
@@ -150,14 +151,14 @@ exports.getDomainHashKey = function(domain, len = 2) {
   return hash.substr(0, len).toLowerCase();
 };
 
-exports.getDkimDir = function(configDir, domain, defaultDkim = false) {
+const getDkimDir = function(configDir, domain, defaultDkim = false) {
   const folderName = defaultDkim ?
-    'default' : exports.getDomainHashKey(domain, 2);
+    'default' : getDomainHashKey(domain, 2);
   return path.join(configDir, 'dkim', folderName);
 };
 
-exports.getDkim = async function(dir, domain, config, defaultDkim = false) {
-  const dkimDir = exports.getDkimDir(dir, domain, defaultDkim);
+const getDkim = async function(dir, domain, config, defaultDkim = false) {
+  const dkimDir = getDkimDir(dir, domain, defaultDkim);
   const textPath = path.join(dkimDir, 'txt');
   const id = path.basename(dkimDir);
   const selector = config.dkimSelector || 'moment';
@@ -172,7 +173,7 @@ exports.getDkim = async function(dir, domain, config, defaultDkim = false) {
 };
 
 let nonce = 0;
-exports.saveEmail = function(baseDir, eml, transport, moreData = {}) {
+const saveEmail = function(baseDir, eml, transport, moreData = {}) {
   try {
     const toDir = transport['rcpt_to'].map(a => a.host).join('_') ||
       'invalid';
@@ -210,7 +211,7 @@ exports.saveEmail = function(baseDir, eml, transport, moreData = {}) {
   }
 };
 
-exports.dnsResolve = function(hostname, recordType, timeout = 20000) {
+const dnsResolve = function(hostname, recordType, timeout = 20000) {
   return new Promise(function(resolve, reject) {
     const dnsResolver = new dns.Resolver();
     //dnsResolver.setServers(['4.4.4.4', '8.8.8.8', '8.8.4.4']);
@@ -244,7 +245,7 @@ exports.dnsResolve = function(hostname, recordType, timeout = 20000) {
 // original array is passed to Promise.allSettled. The later one is available
 // only in node 12.9.0 and later. When we upgrade we should get rid of
 // this function and use Promis.allSettled instead.
-exports.allPromises = function(promises) {
+const allPromises = function(promises) {
   return promises.map(p => new Promise(function(resolve) {
     p.then(function(value) {
       return resolve({
@@ -260,7 +261,7 @@ exports.allPromises = function(promises) {
   }));
 };
 
-exports.copyStream = function(source, dest) {
+const copyStream = function(source, dest) {
   return new Promise(function(resolve, reject) {
     dest.on('finish', function() {
       resolve();
@@ -275,32 +276,32 @@ exports.copyStream = function(source, dest) {
   });
 };
 
-exports.streamToBuffer = async function(source) {
+const streamToBuffer = async function(source) {
   const streamBuffer = new streamBuffers.WritableStreamBuffer({
     initialSize: (64 * 1024),
     incrementAmount: (64 * 1024)
   });
-  await exports.copyStream(source, streamBuffer);
+  await copyStream(source, streamBuffer);
   return streamBuffer.getContents();
 };
 
-exports.streamToBase64 = async function(source) {
-  const buffer = await exports.streamToBuffer(source);
+const streamToBase64 = async function(source) {
+  const buffer = await streamToBuffer(source);
   return buffer.toString('base64');
 };
 
-exports.bufferToStream = async function(buffer, dest) {
+const bufferToStream = async function(buffer, dest) {
   const streamBuffer = new streamBuffers.ReadableStreamBuffer({
     frequency: 10,
     chunkSize: 64 * 1024
   });
-  const copyPromise = exports.copyStream(streamBuffer, dest);
+  const copyPromise = copyStream(streamBuffer, dest);
   streamBuffer.put(buffer);
   streamBuffer.stop();
   await copyPromise;
 };
 
-exports.getMailServers = function(routingConfig) {
+const getMailServers = function(routingConfig) {
   const result = new Set();
   const environments = routingConfig.environments || {};
   for (const environment of Object.keys(environments)) {
@@ -312,7 +313,7 @@ exports.getMailServers = function(routingConfig) {
   return result;
 };
 
-exports.getEnvironment = function(targetDomain, options) {
+const getEnvironment = function(targetDomain, options) {
   const envResult = options.environmentResolver.resolve(targetDomain);
 
   if (envResult) {
@@ -320,13 +321,13 @@ exports.getEnvironment = function(targetDomain, options) {
   }
 };
 
-exports.createResolvers = function(configDir) {
+const createResolvers = function(configDir) {
   const resolverConfig = yaml.parse(
     fs.readFileSync(path.join(configDir, 'domain-resolver.yaml'), 'utf8')
   );
   const resolver = new DomainNameResolver(resolverConfig);
 
-  const routingConfig = exports.parseRoutingConfig(yaml.parse(
+  const routingConfig = parseRoutingConfig(yaml.parse(
     fs.readFileSync(path.join(configDir, 'routing.yaml'), 'utf8')
   ));
 
@@ -345,14 +346,14 @@ exports.createResolvers = function(configDir) {
 };
 
 
-exports.getDirectNotifyRequestRouting = function(options = {}) {
+const getDirectNotifyRequestRouting = function(options = {}) {
   const headers = options.headers || {};
 
   const result = {};
-  const directNotificationUrl = headers[exports.DIRECT_NOTIFY_URL_HEADERNAME];
+  const directNotificationUrl = headers[DIRECT_NOTIFY_URL_HEADERNAME];
   if (directNotificationUrl) {
     result.directNotificationUrl = directNotificationUrl[0];
-    const configName = headers[exports.DIRECT_CONFIG_HEADERNAME];
+    const configName = headers[DIRECT_CONFIG_HEADERNAME];
     const directRoutingConfig = options.directRoutingConfig || {};
     if (configName) {
       const config = directRoutingConfig[configName[0]];
@@ -363,17 +364,17 @@ exports.getDirectNotifyRequestRouting = function(options = {}) {
   return result;
 };
 
-exports.getDirectPostRequestRouting = function(request, options) {
+const getDirectPostRequestRouting = function(request, options) {
   const headers = options.headers || {};
   const result = {};
-  const headername = exports.DIRECT_POST_URL_HEADERNAME;
+  const headername = DIRECT_POST_URL_HEADERNAME;
   if (headername) {
     const headerValue = headers[headername];
     if (headerValue) {
       result.url = headerValue[0];
     }
     const directRoutingConfig = options.directRoutingConfig || {};
-    const configName = headers[exports.DIRECT_CONFIG_HEADERNAME];
+    const configName = headers[DIRECT_CONFIG_HEADERNAME];
     if (configName) {
       const config = directRoutingConfig[configName[0]];
       result.headers = config.headers || {};
@@ -386,7 +387,7 @@ exports.getDirectPostRequestRouting = function(request, options) {
   return result;
 };
 
-exports.headersToObject = function(headers) {
+const headersToObject = function(headers) {
   const headerList = headers.getList();
   const result = {};
   for (const header of headerList) {
@@ -397,7 +398,7 @@ exports.headersToObject = function(headers) {
   return result;
 };
 
-exports.hasSpecialHeaders = function(mail) {
+const hasSpecialHeaders = function(mail) {
   const headers = mail.headers || [];
   for (const header of headers) {
     const headername = header[0];
@@ -408,7 +409,7 @@ exports.hasSpecialHeaders = function(mail) {
   return false;
 };
 
-exports.copyRoutingHeaders = function(source, destination) {
+const copyRoutingHeaders = function(source, destination) {
   for (const routingHeader of routingHeaders) {
     const value = source[routingHeader];
     if (value) {
@@ -417,17 +418,17 @@ exports.copyRoutingHeaders = function(source, destination) {
   }
 };
 
-exports.toJson64 = function(data) {
+const toJson64 = function(data) {
   const json = JSON.stringify(data);
   return Base64.encode(json);
 };
 
-exports.fromJson64 = function(data) {
+const fromJson64 = function(data) {
   const decoded = Base64.decode(data);
   return JSON.parse(decoded);
 };
 
-exports.addressToObject = function(address) {
+const addressToObject = function(address) {
   const result = {
     'original': address.original.toLowerCase(),
     'host': address.host.toLowerCase(),
@@ -466,18 +467,18 @@ const extractAddress = function(source) {
   }
 };
 
-exports.getMxFromHeaders = function(headers) {
-  const mxHeader = headers[exports.JSON64_DIRECT_MX];
+const getMxFromHeaders = function(headers) {
+  const mxHeader = headers[JSON64_DIRECT_MX];
   if (mxHeader) {
-    return exports.fromJson64(mxHeader[0]);
+    return fromJson64(mxHeader[0]);
   }
 };
 
-exports.adjustEnvelope = function(envelope) {
+const adjustEnvelope = function(envelope) {
   if (envelope.interface === 'bounce') {
     return {};
   }
-  const headers = exports.headersToObject(envelope.headers);
+  const headers = headersToObject(envelope.headers);
   let from = extractAddress(headers['from']);
   const replyTo = extractAddress(headers['replyToHeader']);
   if (!extractAddress(envelope.from)) {
@@ -501,16 +502,16 @@ exports.adjustEnvelope = function(envelope) {
   return {};
 };
 
-exports.envelopeToTransport = function(envelope) {
+const envelopeToTransport = function(envelope) {
   const toString = Array.isArray(envelope.to) ?
     envelope.to.join(',') : envelope.to;
   const to = addressParser(toString).map(
-    a => exports.addressToObject(new Address(a.address))
+    a => addressToObject(new Address(a.address))
   );
   let from = '';
   const fromParsed = addressParser(envelope.from);
   if (Array.isArray(fromParsed) && fromParsed.length > 0) {
-    from = exports.addressToObject(new Address(
+    from = addressToObject(new Address(
       fromParsed[0].address
     ));
   }
@@ -518,15 +519,15 @@ exports.envelopeToTransport = function(envelope) {
     ...envelope,
     'mail_from': from,
     'rcpt_to': to,
-    headers: exports.headersToObject(envelope.headers)
+    headers: headersToObject(envelope.headers)
   };
 };
 
-exports.extractGuidFromHeaders = function(headers) {
+const extractGuidFromHeaders = function(headers) {
   if (!headers) {
     return;
   }
-  const guidHeader = headers[exports.GUID_HEADERNAME];
+  const guidHeader = headers[GUID_HEADERNAME];
   if (guidHeader) {
     if (Array.isArray(guidHeader) && guidHeader.length == 1) {
       return guidHeader[0];
@@ -536,7 +537,7 @@ exports.extractGuidFromHeaders = function(headers) {
   }
 };
 
-exports.extractGuid = function(content, fromHeaders = true) {
+const extractGuid = function(content, fromHeaders = true) {
   if (!content) {
     return;
   }
@@ -559,11 +560,11 @@ exports.extractGuid = function(content, fromHeaders = true) {
     return target.guid;
   }
   if (fromHeaders) {
-    return exports.extractGuidFromHeaders(transport.headers);
+    return extractGuidFromHeaders(transport.headers);
   }
 };
 
-exports.transportLogInfo = function(transport, guidFromHeaders = true) {
+const transportLogInfo = function(transport, guidFromHeaders = true) {
   if (!transport) {
     return '';
   }
@@ -577,7 +578,7 @@ exports.transportLogInfo = function(transport, guidFromHeaders = true) {
   if (transport.headers && transport.headers['message-id']) {
     id = ` id: ${transport.headers['message-id'][0]}`;
   }
-  const guid = exports.extractGuid({transport}, guidFromHeaders);
+  const guid = extractGuid({transport}, guidFromHeaders);
   return {
     id,
     guid,
@@ -586,8 +587,8 @@ exports.transportLogInfo = function(transport, guidFromHeaders = true) {
   };
 };
 
-exports.generateGuid = function(prefix = 'email_', len = 24) {
-  const r = exports.randomAlphanumeric(len).replace('I', 'T').replace('l', 'L');
+const generateGuid = function(prefix = 'email_', len = 24) {
+  const r = randomAlphanumeric(len).replace('I', 'T').replace('l', 'L');
   return prefix.toString() + r;
 };
 
@@ -603,7 +604,7 @@ const getRelaxedHeaderLine = function(headers, headerName) {
     cleanHeaderValues.join('\r\n');
 };
 
-exports.generateEmailGuid = function(
+const generateEmailGuid = function(
   from,
   to,
   headers,
@@ -634,8 +635,133 @@ exports.generateEmailGuid = function(
       .padEnd(len, 'd');
 };
 
+const extractAddressObjects = function(source) {
+  const result = [];
+  if (!source) {
+    return result;
+  }
+  if (Array.isArray(source)) {
+    for (const item of source) {
+      result.push(...extractAddressObjects(item));
+    }
+  } else if (typeof source === 'object') {
+    const sourceAddress = source.address;
+    if (sourceAddress &&
+      (typeof sourceAddress === 'string' || sourceAddress instanceof String)
+    ) {
+      result.push({
+        name: source.name || '',
+        address: sourceAddress
+      });
+    } else {
+      result.push(...extractAddressObjects(Object.values(source)));
+    }
+  }
+  return result;
+};
+
+const parseAddresses = function(source) {
+  let result = [];
+  if (!source) {
+    return result;
+  } else if (Array.isArray(source)) {
+    const parsedAddresses = source.map(x => parseAddresses(x));
+    result = parsedAddresses.reduce((p, c) => p.concat(c), []);
+  } else if (typeof source === 'object') {
+    result = [{
+      name: source.name,
+      address: source.address
+    }];
+  } else {
+    result = addressParser(source);
+  }
+  return extractAddressObjects(result);
+};
+
+const getAddressesFromEmail = function(email) {
+  const from = parseAddresses(email.from);
+  const to = parseAddresses(email.to);
+  const cc = parseAddresses(email.cc);
+  const bcc = parseAddresses(email.bcc);
+  const envelope = email.envelope || {};
+  const envelopeFrom = parseAddresses(envelope.from);
+  const envelopeTo = parseAddresses(envelope.to);
+  const envelopeCc = parseAddresses(envelope.cc);
+  const envelopeBcc = parseAddresses(envelope.bcc);
+  const recipients = Array.from(new Set(
+    to.concat(cc, bcc, envelopeTo, envelopeCc, envelopeBcc).map(x => x.address)
+  ).values());
+
+  return {
+    from,
+    to,
+    cc,
+    bcc,
+    envelopeFrom,
+    envelopeTo,
+    envelopeCc,
+    envelopeBcc,
+    recipients
+  };
+};
 
 
-exports.generateMessageId = function(domain, prefix = 'id.') {
-  return `<${prefix}${Date.now()}.${exports.randomHexString(24)}@${domain}>`;
+
+const generateMessageId = function(domain, prefix = 'id.') {
+  return `<${prefix}${Date.now()}.${randomHexString(24)}@${domain}>`;
+};
+
+module.exports = {
+  DIRECT_CONFIG_HEADERNAME,
+  DIRECT_POST_URL_HEADERNAME,
+  DIRECT_NOTIFY_URL_HEADERNAME,
+  DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME,
+  JSON64_DIRECT_MX,
+  JSON64_DATA_HEADERNAME,
+  MOMENT_POST_URL_HEADERNAME,
+  MOMENT_NOTIFY_URL_HEADERNAME,
+  MOMENT_ROUTING_RESPONSE_HEADERNAME,
+  GUID_HEADERNAME,
+  normalizeEOLs,
+  asyncWrapper,
+  clearInboxes,
+  randomHexString,
+  randomAlphanumeric,
+  errorHandler,
+  ok,
+  hashQueueName,
+  parseRoutingConfig,
+  getDomainHashKey,
+  getDkimDir,
+  getDkim,
+  saveEmail,
+  dnsResolve,
+  allPromises,
+  copyStream,
+  streamToBuffer,
+  streamToBase64,
+  generateMessageId,
+  bufferToStream,
+  getMailServers,
+  getEnvironment,
+  createResolvers,
+  getDirectNotifyRequestRouting,
+  getDirectPostRequestRouting,
+  headersToObject,
+  hasSpecialHeaders,
+  copyRoutingHeaders,
+  toJson64,
+  fromJson64,
+  addressToObject,
+  getMxFromHeaders,
+  adjustEnvelope,
+  envelopeToTransport,
+  extractGuidFromHeaders,
+  extractGuid,
+  transportLogInfo,
+  generateGuid,
+  generateEmailGuid,
+  extractAddressObjects,
+  parseAddresses,
+  getAddressesFromEmail
 };

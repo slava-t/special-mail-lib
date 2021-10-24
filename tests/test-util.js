@@ -155,3 +155,158 @@ describe('extractGuid', function() {
     }}}));
   });
 });
+
+describe('parseAddresses', function() {
+  it('should correctly parse', function() {
+    assert.deepEqual(util.parseAddresses(), []);
+    assert.deepEqual(
+      util.parseAddresses('Mister Smith <mister.smith@test.com>'),
+      [{
+        address: 'mister.smith@test.com',
+        name: 'Mister Smith'
+      }]
+    );
+    assert.deepEqual(
+      util.parseAddresses(
+        'groupname:"first, last" <test1@example.com>, ' +
+        'test2@example.com (Name2);'
+      ),
+      [
+        {
+          address: 'test1@example.com',
+          name: 'first, last'
+        },
+        {
+          address: 'test2@example.com',
+          name: 'Name2'
+        }
+      ]
+    );
+  });
+});
+
+describe('extractAddressObjects', function() {
+  it('should correctly extract', function() {
+    assert.deepEqual(util.extractAddressObjects(), []);
+    assert.deepEqual(util.extractAddressObjects([]), []);
+    assert.deepEqual(util.extractAddressObjects('a string'), []);
+    const addresses = [
+      [
+      ],
+      [
+        {
+          a: [
+            {
+              address: 'a001@example.com',
+              name: 'name001'
+            }
+          ],
+          b: {
+            address: 'a002@example.com',
+            name: 'name002'
+          }
+        },
+        {
+          address: 'a003@example.com'
+        }
+      ],
+      {
+        address: 'a004@example.com',
+        name: 'name004'
+      },
+      null,
+      '',
+      0,
+      undefined
+    ];
+    assert.deepEqual(util.extractAddressObjects(addresses), [
+      {name: 'name001', address: 'a001@example.com'},
+      {name: 'name002', address: 'a002@example.com'},
+      {name: '', address: 'a003@example.com'},
+      {name: 'name004', address: 'a004@example.com'}
+    ]);
+  });
+});
+
+describe('getAddressesFromEmail', function() {
+  it('should correctly get the addresses', function() {
+    assert.deepEqual(util.getAddressesFromEmail({}), {
+      to: [],
+      from: [],
+      cc: [],
+      bcc: [],
+      envelopeFrom: [],
+      envelopeTo: [],
+      envelopeCc: [],
+      envelopeBcc: [],
+      recipients: []
+    });
+    const email = {
+      from: 'a001@example.com',
+      to: [
+        {name: 'a002', address: 'a002@example.com'},
+        'a003 <a003@example.com'
+      ],
+      cc: [
+        'groupname:"first, last" <test1@example.com>, ' +
+          'test2@example.com (Name2);',
+        'a004@example.com'
+      ],
+      bcc: 'a005@example.com (a005); a006@example.com',
+      envelope: {
+        from: 'a001@example.com',
+        to: [
+          {name: 'a002', address: 'a002@example.com'},
+          'a003 <a003@example.com'
+        ],
+        cc: [
+          'groupname:"first, last" <test1@example.com>, ' +
+            'test2@example.com (Name2);',
+          'a004@example.com'
+        ],
+        bcc: 'a005@example.com (a005); a006@example.com',
+      }
+    };
+    const addresses = util.getAddressesFromEmail(email);
+    assert.deepEqual(addresses, {
+      from: [{name: '', address: 'a001@example.com'}],
+      to: [
+        {name: 'a002', address: 'a002@example.com'},
+        {name: 'a003', address: 'a003@example.com'}
+      ],
+      cc: [
+        {name: 'first, last', address: 'test1@example.com'},
+        {name: 'Name2', address: 'test2@example.com'},
+        {name: '', address: 'a004@example.com'}
+      ],
+      bcc: [
+        {name: 'a005', address: 'a005@example.com'},
+        {name: '', address: 'a006@example.com'}
+      ],
+      envelopeFrom: [{name: '', address: 'a001@example.com'}],
+      envelopeTo: [
+        {name: 'a002', address: 'a002@example.com'},
+        {name: 'a003', address: 'a003@example.com'}
+      ],
+      envelopeCc: [
+        {name: 'first, last', address: 'test1@example.com'},
+        {name: 'Name2', address: 'test2@example.com'},
+        {name: '', address: 'a004@example.com'}
+      ],
+      envelopeBcc: [
+        {name: 'a005', address: 'a005@example.com'},
+        {name: '', address: 'a006@example.com'}
+      ],
+      recipients: [
+        'a002@example.com',
+        'a003@example.com',
+        'test1@example.com',
+        'test2@example.com',
+        'a004@example.com',
+        'a005@example.com',
+        'a006@example.com'
+      ]
+    });
+  });
+});
+
