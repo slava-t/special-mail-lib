@@ -1,6 +1,6 @@
 {
   "name": "special-mail-lib",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "Special mail lib",
   "main": "index.js",
   "scripts": {
@@ -19,21 +19,21 @@
     "eslint-plugin-jasmine": "^4.1.2",
     "eslint-plugin-jest": "^24.3.6",
     "eslint-plugin-react": "^7.23.2",
-    "mocha": "^8.3.2",
+    "mocha": "^9.2.2",
     "typescript": "^4.2.4"
   },
   "dependencies": {
     "address-rfc2821": "^2.0.1",
     "addressparser": "^1.0.1",
-    "axios": "^0.23.0",
+    "axios": "^0.26.1",
     "haraka-dsn": "^1.0.3",
     "iconv": "^3.0.0",
     "js-base64": "^3.6.0",
-    "mailparser": "^3.2.0",
+    "mailparser": "^3.4.0",
     "merge": "^2.1.1",
     "pg-boss": "^5.2.3",
     "pg-native": "^2.2.0",
-    "sequelize": "^6.6.2",
+    "sequelize": "^6.18.0",
     "sleep-promise": "^9.1.0",
     "spf-check": "^0.4.3",
     "stream-buffers": "^3.0.2",
