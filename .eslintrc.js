@@ -13,14 +13,18 @@ module.exports = {
     'wrapInRouter': 'readonly',
     'wrapInProvider': 'readonly',
   },
-  'parser': 'babel-eslint',
+  'parser': '@babel/eslint-parser',
   'parserOptions': {
+    'requireConfigFile': false,
+    'babelOptions': {
+      'presets': ['@babel/preset-react']
+    },
     'ecmaFeatures': {
       'experimentalObjectRestSpread': true,
       'jsx': true
     },
     'sourceType': 'module',
-    'ecmaVersion': 2018,
+    'ecmaVersion': 2022,
   },
   'plugins': ['react', 'jasmine', 'jest'],
   'rules': {
