@@ -12,6 +12,7 @@
     "url": "https://github.com/slava-t/special-mail-lib.git"
   },
   "license": "MIT",
+  "type":"commonjs",
   "devDependencies": {
     "@babel/core": "^7.18.10",
     "@babel/eslint-parser": "^7.18.9",
@@ -33,6 +34,7 @@
     "js-base64": "^3.7.2",
     "mailparser": "^3.5.0",
     "merge": "^2.1.1",
+    "node-fetch": "2.6.6",
     "pg-boss": "^8.0.0",
     "sequelize": "^6.21.3",
     "sleep-promise": "^9.1.0",
