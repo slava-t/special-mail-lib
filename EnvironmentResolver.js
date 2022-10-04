@@ -1,6 +1,6 @@
-const {getLogger} = require('./logger.js');
+import {getLogger} from './logger.js';
 
-module.exports = class EnvironmentResolver {
+export default class EnvironmentResolver {
   constructor(routingConfig) {
     this._logger = getLogger();
     this._routes = [];
@@ -35,4 +35,4 @@ module.exports = class EnvironmentResolver {
       }
     }
   }
-};
+}

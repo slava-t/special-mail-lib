@@ -1,10 +1,10 @@
-const Address = require('address-rfc2821').Address;
-const {getLogger} = require('./logger.js');
+import {Address} from 'address-rfc2821';
+import {getLogger} from './logger.js';
 // eslint-disable-next-line camelcase
-const {send_email} = require('./plugin-util.js');
-const {transportLogInfo} = require('./util.js');
+import {send_email} from './plugin-util.js';
+import {transportLogInfo} from './util.js';
 
-module.exports = class ForwardingJob {
+export default class ForwardingJob {
   constructor(item, options) {
     this._logger = getLogger(options);
     this._plugin = options.plugin;
@@ -49,4 +49,4 @@ module.exports = class ForwardingJob {
       throw err;
     }
   }
-};
+}

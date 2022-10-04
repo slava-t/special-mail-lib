@@ -1,4 +1,4 @@
-module.exports = class EmailSorter {
+export default class EmailSorter {
   constructor(item, mail) {
     this._item = item;
     this._mail = mail;
@@ -64,4 +64,4 @@ module.exports = class EmailSorter {
       transport: this._getTransportInfo(address)
     };
   }
-};
+}

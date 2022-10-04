@@ -1,10 +1,10 @@
-const EmailParsingJob = require('./EmailParsingJob.js');
-const RoutingJob = require('./RoutingJob.js');
-const PostingJob = require('./PostingJob.js');
-const ForwardingJob = require('./ForwardingJob.js');
-const jobTypes = require('./job-types.js');
+import EmailParsingJob from './EmailParsingJob.js';
+import RoutingJob from './RoutingJob.js';
+import PostingJob from './PostingJob.js';
+import ForwardingJob from './ForwardingJob.js';
+import jobTypes from './job-types.js';
 
-module.exports = {
+export default {
   [jobTypes.PARSE]: {JobClass: EmailParsingJob},
   [jobTypes.ROUTE]: {JobClass: RoutingJob},
   [jobTypes.POST]: {JobClass: PostingJob},

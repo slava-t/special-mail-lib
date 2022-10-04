@@ -1,12 +1,13 @@
-const jobClasses = require('./job-classes');
-const jobTypes = require('./job-types');
-const {getLogger} = require('./logger');
-const urlJoin = require('url-join');
-const {
+import PgBoss from 'pg-boss';
+import jobClasses from './job-classes';
+import jobTypes from './job-types';
+import {getLogger} from './logger';
+import urlJoin from 'url-join';
+import {
   getEnvironment,
   allPromises,
   extractGuid
-} = require('./util');
+} from './util';
 
 class JobQueue {
   constructor(options = {}) {
@@ -24,7 +25,6 @@ class JobQueue {
       ...jobClasses,
       ...(options.jobClasses || {})
     };
-    const PgBoss = require('pg-boss');
     const pgBossOptions = {
       host: options.host || 'localhost',
       port: options.port || 5432,
@@ -242,7 +242,7 @@ const createJobQueue = async function(options) {
   return queue;
 };
 
-module.exports = {
+export {
   JobQueue,
   createJobQueue
 };

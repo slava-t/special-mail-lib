@@ -1,8 +1,8 @@
-const axios = require('axios');
-const {transportLogInfo} = require('./util.js');
-const {getLogger} = require('./logger.js');
+import axios from 'axios';
+import {transportLogInfo} from './util.js';
+import {getLogger} from './logger.js';
 
-module.exports = class PostingJob {
+export default class PostingJob {
   constructor(item, options) {
     this._logger = getLogger(options);
     const url = item.request.url;
@@ -62,4 +62,4 @@ module.exports = class PostingJob {
       throw err;
     }
   }
-};
+}

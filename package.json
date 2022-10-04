@@ -1,6 +1,6 @@
 {
   "name": "special-mail-lib",
-  "version": "3.3.2",
+  "version": "4.0.0",
   "description": "Special mail lib",
   "main": "index.js",
   "scripts": {
@@ -12,16 +12,16 @@
     "url": "https://github.com/slava-t/special-mail-lib.git"
   },
   "license": "MIT",
-  "type":"commonjs",
+  "type":"module",
   "devDependencies": {
-    "@babel/core": "^7.18.10",
-    "@babel/eslint-parser": "^7.18.9",
+    "@babel/core": "^7.19.3",
+    "@babel/eslint-parser": "^7.19.1",
     "@babel/preset-react": "^7.18.6",
-    "eslint": "^8.22.0",
+    "eslint": "^8.24.0",
     "eslint-plugin-babel": "^5.3.1",
     "eslint-plugin-jasmine": "^4.1.3",
-    "eslint-plugin-jest": "^26.8.3",
-    "eslint-plugin-react": "^7.30.1",
+    "eslint-plugin-jest": "^27.1.0",
+    "eslint-plugin-react": "^7.31.8",
     "mocha": "^10.0.0",
     "typescript": "^4.7.4"
   },
@@ -34,7 +34,6 @@
     "js-base64": "^3.7.2",
     "mailparser": "^3.5.0",
     "merge": "^2.1.1",
-    "node-fetch": "2.6.6",
     "pg-boss": "^8.0.0",
     "sequelize": "^6.21.3",
     "sleep-promise": "^9.1.0",

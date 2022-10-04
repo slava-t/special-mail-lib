@@ -1,17 +1,31 @@
+import config from './config';
+import DomainNameResolver from './DomainNameResolver';
+import DomainNameVerifier from './DomainNameVerifier';
+import EmailSorter from './EmailSorter';
+import EnvironmentResolver from './EnvironmentResolver';
+import {createError} from './error';
+import MailStore from './MailStore';
+import mailStoreModel from './mail-store-model';
+import MxVerifier from './MxVerifier';
+import TestInbox from './TestInbox';
+import jobTypes from './job-types';
+import * as util from './util';
+import * as jobQueue from './JobQueue';
+import * as logger from './logger.js';
 
 module.exports = {
-  config: require('./config'),
-  DomainNameResolver: require('./DomainNameResolver'),
-  DomainNameVerifier: require('./DomainNameVerifier'),
-  EmailSorter: require('./EmailSorter'),
-  EnvironmentResolver: require('./EnvironmentResolver'),
-  createError: require('./error').createError,
-  MailStore: require('./MailStore'),
-  mailStoreModel: require('./mail-store-model.js'),
-  MxVerifier: require('./MxVerifier'),
-  TestInbox: require('./TestInbox'),
-  jobTypes: require('./job-types'),
-  ...require('./util.js'),
-  ...require('./JobQueue.js'),
-  ...require('./logger.js')
+  config,
+  DomainNameResolver,
+  DomainNameVerifier,
+  EmailSorter,
+  EnvironmentResolver,
+  createError,
+  MailStore,
+  mailStoreModel,
+  MxVerifier,
+  TestInbox,
+  jobTypes,
+  ...util,
+  ...jobQueue,
+  ...logger
 };

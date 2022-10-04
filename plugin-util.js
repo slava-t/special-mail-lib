@@ -1,4 +1,4 @@
-const streamBuffers = require('stream-buffers');
+import streamBuffers from 'stream-buffers';
 
 const sendEmailCallBack = function(plugin, resolve, reject) {
   return function(code, msg) {

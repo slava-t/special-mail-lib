@@ -1,9 +1,9 @@
-const MxVerifier = require('./MxVerifier');
-const {createError} = require('./error');
-const {getDkim, dnsResolve, allPromises} = require('./util');
-const spfCheck = require('spf-check');
+import MxVerifier from './MxVerifier';
+import {createError} from './error';
+import {getDkim, dnsResolve, allPromises} from './util';
+import spfCheck from 'spf-check';
 
-module.exports =  class DomainNameVerifier {
+export default class DomainNameVerifier {
   constructor(configDir, options = {}) {
     const self = this;
     self._configDir = configDir;
@@ -259,4 +259,4 @@ module.exports =  class DomainNameVerifier {
     return fast ?
       verifier.fastVerify(records) : verifier.verify(records);
   }
-};
+}

@@ -1,11 +1,11 @@
-const simpleParser = require('mailparser').simpleParser;
-const Iconv = require('iconv').Iconv;
-const EmailSorter = require('./EmailSorter');
-const jobTypes = require('./job-types.js');
-const {getLogger} = require('./logger.js');
-const {getDirectNotifyRequestRouting, transportLogInfo} = require('./util.js');
+import {simpleParser} from 'mailparser';
+import {Iconv} from 'iconv';
+import EmailSorter from './EmailSorter';
+import jobTypes from './job-types.js';
+import {getLogger} from './logger.js';
+import {getDirectNotifyRequestRouting, transportLogInfo} from './util.js';
 
-module.exports = class EmailParsingJob {
+export default class EmailParsingJob {
   constructor(item, options) {
     this._logger = getLogger(options);
     this._item = item;
@@ -84,4 +84,4 @@ module.exports = class EmailParsingJob {
       }
     }
   }
-};
+}

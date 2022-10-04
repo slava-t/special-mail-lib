@@ -1,4 +1,4 @@
-module.exports = class DomainNameResolver {
+export default class DomainNameResolver {
   constructor(config) {
     this.config = config;
     this.routes = [];
@@ -95,5 +95,5 @@ module.exports = class DomainNameResolver {
       notificationUrl: `${baseUrl}${res.notificationUri}`
     };
   }
-};
+}
 

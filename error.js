@@ -1,4 +1,4 @@
-const format = require('string-template');
+import format from 'string-template';
 
 const errors = {
   MxPriorityTooLow: {
@@ -54,6 +54,6 @@ const createError = function(error, ...params) {
   };
 };
 
-module.exports = {
+export {
   createError
 };

@@ -1,8 +1,7 @@
-const format = require('string-template');
-const {createError} = require('./error');
+import format from 'string-template';
+import {createError} from './error';
 
-
-module.exports = class MxVerifier {
+export default class MxVerifier {
   constructor(mailServers) {
     this._mailServers = [];
     this._mailServerSet = new Set();
@@ -198,4 +197,4 @@ module.exports = class MxVerifier {
       steps
     };
   }
-};
+}

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   PARSE: 'parse',
   ROUTE: 'route',
   POST: 'post',

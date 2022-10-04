@@ -1,22 +1,22 @@
-const axios = require('axios');
-const Address = require('address-rfc2821').Address;
-const urlJoin = require('url-join');
-const jobTypes = require('./job-types.js');
-const {getLogger} = require('./logger.js');
-const {
+import axios from 'axios';
+import {Address} from 'address-rfc2821';
+import urlJoin from 'url-join';
+import jobTypes from './job-types.js';
+import {getLogger} from './logger.js';
+import {
   DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME,
   hashQueueName,
   getEnvironment,
   getDirectNotifyRequestRouting,
   getDirectPostRequestRouting,
   transportLogInfo
-} = require('./util.js');
+} from './util.js';
 
 // eslint-disable-next-line camelcase
-const {send_email, bounce_email} = require('./plugin-util.js');
-const DSN = require('haraka-dsn');
+import {send_email, bounce_email} from './plugin-util.js';
+import DSN from 'haraka-dsn';
 
-module.exports = class RoutingJob {
+export default class RoutingJob {
   constructor(item, options) {
     this._logger = getLogger(options);
     this._options = options;
@@ -269,5 +269,5 @@ module.exports = class RoutingJob {
       }
     }, hashQueueName('mail-post-', url));
   }
-};
+}
 

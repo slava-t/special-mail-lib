@@ -1,20 +1,17 @@
-//import crypto from 'crypto'
-const crypto = require('crypto');
-const fs = require('fs');
-const path = require('path');
-const dns = require('dns');
-const util = require('util');
-const yaml = require('yaml');
-const merge = require('merge');
-const {Base64} = require('js-base64');
-const addressParser = require('addressparser');
-const Address = require('address-rfc2821').Address;
-const streamBuffers = require('stream-buffers');
-
-const EnvironmentResolver = require('./EnvironmentResolver');
-const DomainNameResolver = require('./DomainNameResolver');
-const {getLogger} = require('./logger.js');
-
+import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
+import dns from 'dns';
+import util from 'util';
+import yaml from 'yaml';
+import merge from 'merge';
+import {Base64} from 'js-base64';
+import addressParser from 'addressparser';
+import {Address} from 'address-rfc2821';
+import streamBuffers from 'stream-buffers';
+import EnvironmentResolver from './EnvironmentResolver.js';
+import DomainNameResolver from './DomainNameResolver.js';
+import {getLogger} from './logger.js';
 const asyncReadFile = util.promisify(fs.readFile);
 
 const logger = getLogger();
@@ -712,7 +709,7 @@ const generateMessageId = function(domain, prefix = 'id.') {
   return `<${prefix}${Date.now()}.${randomHexString(24)}@${domain}>`;
 };
 
-module.exports = {
+export default {
   DIRECT_CONFIG_HEADERNAME,
   DIRECT_POST_URL_HEADERNAME,
   DIRECT_NOTIFY_URL_HEADERNAME,

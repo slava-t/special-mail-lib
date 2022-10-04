@@ -1,7 +1,7 @@
-const createModel = require('./mail-store-model.js');
-const {getLogger} = require('./logger.js');
+import createModel from './mail-store-model.js';
+import {getLogger} from './logger.js';
 
-module.exports = class MailStore {
+export default class MailStore {
   constructor(model) {
     this.logger = getLogger();
     this.model = model;
@@ -216,4 +216,4 @@ module.exports = class MailStore {
       clearInterval(this.cleanUpIntervalId);
     }
   }
-};
+}

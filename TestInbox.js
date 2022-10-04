@@ -1,9 +1,10 @@
-const axios = require('axios');
-const crypto = require('crypto');
-const sleep = require('sleep-promise');
-const urlJoin = require('url-join');
 
-module.exports = class TestInbox {
+import axios from 'axios';
+import crypto from 'crypto';
+import sleep from 'sleep-promise';
+import urlJoin from 'url-join';
+
+export default class TestInbox {
   constructor(localName = null, name = null, options = {}) {
     this.options = {
       ...(TestInbox.options || {}),
@@ -224,4 +225,4 @@ module.exports = class TestInbox {
     }
     return res.data.result;
   }
-};
+}

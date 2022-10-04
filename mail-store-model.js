@@ -1,5 +1,5 @@
-const Sequelize = require('sequelize');
-module.exports = function(password, options = {}) {
+import Sequelize from 'sequelize';
+export default function(password, options = {}) {
 
   const sequelize = new Sequelize(
     options.dbName || 'mailstore',
@@ -58,5 +58,5 @@ module.exports = function(password, options = {}) {
     }]
   });
   return model;
-};
+}
 
