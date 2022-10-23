@@ -1,6 +1,5 @@
 const axios = require('axios');
 const Address = require('address-rfc2821').Address;
-const urlJoin = require('url-join');
 const jobTypes = require('./job-types.js');
 const {getLogger} = require('./logger.js');
 const {
@@ -9,7 +8,8 @@ const {
   getEnvironment,
   getDirectNotifyRequestRouting,
   getDirectPostRequestRouting,
-  transportLogInfo
+  transportLogInfo,
+  urlJoin
 } = require('./util.js');
 
 // eslint-disable-next-line camelcase

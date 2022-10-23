@@ -1,11 +1,11 @@
 const jobClasses = require('./job-classes');
 const jobTypes = require('./job-types');
 const {getLogger} = require('./logger');
-const urlJoin = require('url-join');
 const {
   getEnvironment,
   allPromises,
-  extractGuid
+  extractGuid,
+  urlJoin
 } = require('./util');
 
 class JobQueue {
@@ -131,7 +131,7 @@ class JobQueue {
       return true;
     } catch (err) {
       //just log the error
-      this._logger(
+      this._logger.error(
         'ERROR: unexpected error occured while queueing a two staged item',
         err
       );
@@ -152,7 +152,7 @@ class JobQueue {
       return true;
     } catch (err) {
       //just log the error.
-      this._logger(
+      this._logger.error(
         'ERROR: unexpected error occurred while queueing an item',
         err
       );
@@ -190,7 +190,10 @@ class JobQueue {
         if (!environment) {
           throw new Error(`Could not find and environment for ${target}`);
         }
-        url = urlJoin(environment.baseUrl, environment.notificationPostUri);
+        url = urlJoin(
+          environment.baseUrl,
+          environment.notificationPostUri
+        );
         headers = environment.notificationPostHeaders || {};
         auth = environment.notificationPostAuth;
       }

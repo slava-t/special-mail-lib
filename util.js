@@ -20,6 +20,7 @@ const logger = getLogger();
 
 const DIRECT_CONFIG_HEADERNAME = 'x-debuggex-direct-routing-config';
 const DIRECT_POST_URL_HEADERNAME = 'x-debuggex-direct-routing-post-url';
+const DIRECT_FORWARD_URL_HEADERNAME = 'x-debuggex-direct-routing-post-url';
 const DIRECT_NOTIFY_URL_HEADERNAME = 'x-debuggex-direct-routing-notify-url';
 const DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME =
   'x-debuggex-direct-dynamic-routing-url';
@@ -142,6 +143,11 @@ const parseRoutingConfig = function(data) {
   };
 };
 
+const urlJoin = function(base, uri) {
+  url = new URL(base);
+  hostUrl = `${url.protocol}//${url.host}`
+  return new URL(path.join(url.pathname, uri), hostUrl).href;
+};
 
 const getDomainHashKey = function(domain, len = 2) {
   const normalizedDomain = domain.toLowerCase().replace(/\./g, ' ').trim();
@@ -711,9 +717,11 @@ const generateMessageId = function(domain, prefix = 'id.') {
   return `<${prefix}${Date.now()}.${randomHexString(24)}@${domain}>`;
 };
 
+
 module.exports = {
   DIRECT_CONFIG_HEADERNAME,
   DIRECT_POST_URL_HEADERNAME,
+  DIRECT_FORWARD_URL_HEADERNAME,
   DIRECT_NOTIFY_URL_HEADERNAME,
   DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME,
   JSON64_DIRECT_MX,
@@ -763,5 +771,6 @@ module.exports = {
   generateEmailGuid,
   extractAddressObjects,
   parseAddresses,
-  getAddressesFromEmail
+  getAddressesFromEmail,
+  urlJoin
 };
