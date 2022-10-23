@@ -1,7 +1,6 @@
 const jobClasses = require('./job-classes');
 const jobTypes = require('./job-types');
 const {getLogger} = require('./logger');
-const urlJoin = require('url-join');
 const {
   getEnvironment,
   allPromises,
@@ -190,7 +189,7 @@ class JobQueue {
         if (!environment) {
           throw new Error(`Could not find and environment for ${target}`);
         }
-        url = urlJoin(environment.baseUrl, environment.notificationPostUri);
+        url = new URL(environment.notificationPostUri, environment.baseUrl).href;
         headers = environment.notificationPostHeaders || {};
         auth = environment.notificationPostAuth;
       }

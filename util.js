@@ -20,6 +20,7 @@ const logger = getLogger();
 
 const DIRECT_CONFIG_HEADERNAME = 'x-debuggex-direct-routing-config';
 const DIRECT_POST_URL_HEADERNAME = 'x-debuggex-direct-routing-post-url';
+const DIRECT_FORWARD_URL_HEADERNAME = 'x-debuggex-direct-routing-post-url';
 const DIRECT_NOTIFY_URL_HEADERNAME = 'x-debuggex-direct-routing-notify-url';
 const DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME =
   'x-debuggex-direct-dynamic-routing-url';
@@ -34,6 +35,7 @@ const GUID_HEADERNAME = 'x-debuggex-guid';
 const specialHeaders = [
   DIRECT_CONFIG_HEADERNAME,
   DIRECT_POST_URL_HEADERNAME,
+  DIRECT_FORWARD_URL_HEADERNAME,
   DIRECT_NOTIFY_URL_HEADERNAME,
   DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME,
   JSON64_DATA_HEADERNAME,
@@ -714,6 +716,7 @@ const generateMessageId = function(domain, prefix = 'id.') {
 module.exports = {
   DIRECT_CONFIG_HEADERNAME,
   DIRECT_POST_URL_HEADERNAME,
+  DIRECT_FORWARD_URL_HEADERNAME,
   DIRECT_NOTIFY_URL_HEADERNAME,
   DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME,
   JSON64_DIRECT_MX,

@@ -1,7 +1,6 @@
 const axios = require('axios');
 const crypto = require('crypto');
 const sleep = require('sleep-promise');
-const urlJoin = require('url-join');
 
 module.exports = class TestInbox {
   constructor(localName = null, name = null, options = {}) {
@@ -80,7 +79,7 @@ module.exports = class TestInbox {
   }
 
   getEmailsUrl() {
-    return urlJoin(this.apiUrl, this.inboxEmailsUrl);
+    return new URL(this.inboxEmailsUrl, this.apiUrl).href;
   }
 
   async save(mail) {

@@ -1,6 +1,6 @@
 {
   "name": "special-mail-lib",
-  "version": "3.3.2",
+  "version": "4.0.5",
   "description": "Special mail lib",
   "main": "index.js",
   "scripts": {
@@ -39,7 +39,6 @@
     "spf-check": "^0.4.3",
     "stream-buffers": "^3.0.2",
     "string-template": "^1.0.0",
-    "url-join": "^5.0.0",
     "winston": "^3.8.1",
     "yaml": "^2.1.1"
   }

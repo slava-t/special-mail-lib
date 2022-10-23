@@ -1,6 +1,5 @@
 const axios = require('axios');
 const Address = require('address-rfc2821').Address;
-const urlJoin = require('url-join');
 const jobTypes = require('./job-types.js');
 const {getLogger} = require('./logger.js');
 const {
@@ -117,7 +116,7 @@ module.exports = class RoutingJob {
 
   async _fetchRoutingInfo(environment) {
     const self = this;
-    let routingUrl = urlJoin(environment.baseUrl, environment.routingUri);
+    let routingUrl = new URL(environment.routingUri, environment.baseUrl).href;
     const directUrl = self._headers[DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME];
 
     if (directUrl) {
@@ -145,7 +144,7 @@ module.exports = class RoutingJob {
     let ignore = true;
     if (routingInfo.post) {
       ignore = false;
-      const url = urlJoin(environment.baseUrl, environment.emailPostUri);
+      const url = new URL(environment.emailPostUri, environment.baseUrl).href;
       const headers = environment.emailPostHeaders;
       const request = getDirectPostRequestRouting(
         {
@@ -256,7 +255,7 @@ module.exports = class RoutingJob {
       );
     }
 
-    const url = urlJoin(environment.baseUrl, environment.emailPostUri);
+    const url = new URL(environment.emailPostUri, environment.baseUrl).href;
     const headers = environment.emailPostHeaders;
 
     await this._queue.pushTrackedItem({
