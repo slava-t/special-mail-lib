@@ -149,7 +149,7 @@ class JobQueue {
         }
       });
       //TODO clean
-      this._logger.info(`--- pushe item to queue ${queueName}. Item: ${item}`);
+      this._logger.info(`--- push item to queue ${queueName}. Item: ${item}`);
       return true;
     } catch (err) {
       //just log the error.
