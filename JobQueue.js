@@ -189,7 +189,10 @@ class JobQueue {
         if (!environment) {
           throw new Error(`Could not find and environment for ${target}`);
         }
-        url = new URL(environment.notificationPostUri, environment.baseUrl).href;
+        url = new URL(
+          environment.notificationPostUri,
+          environment.baseUrl
+        ).href;
         headers = environment.notificationPostHeaders || {};
         auth = environment.notificationPostAuth;
       }
