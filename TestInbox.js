@@ -2,6 +2,8 @@ const axios = require('axios');
 const crypto = require('crypto');
 const sleep = require('sleep-promise');
 
+const {urlJoin} = require('./util.js');
+
 module.exports = class TestInbox {
   constructor(localName = null, name = null, options = {}) {
     this.options = {
@@ -79,7 +81,7 @@ module.exports = class TestInbox {
   }
 
   getEmailsUrl() {
-    return new URL(this.inboxEmailsUrl, this.apiUrl).href;
+    return urlJoin(this.apiUrl, this.inboxEmailsUrl);
   }
 
   async save(mail) {

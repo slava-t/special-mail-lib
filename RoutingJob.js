@@ -8,7 +8,8 @@ const {
   getEnvironment,
   getDirectNotifyRequestRouting,
   getDirectPostRequestRouting,
-  transportLogInfo
+  transportLogInfo,
+  urlJoin
 } = require('./util.js');
 
 // eslint-disable-next-line camelcase
@@ -116,7 +117,7 @@ module.exports = class RoutingJob {
 
   async _fetchRoutingInfo(environment) {
     const self = this;
-    let routingUrl = new URL(environment.routingUri, environment.baseUrl).href;
+    let routingUrl = urlJoin(environment.baseUrl, environment.routingUri);
     const directUrl = self._headers[DIRECT_DYNAMIC_ROUTING_URL_HEADERNAME];
 
     if (directUrl) {
@@ -144,7 +145,7 @@ module.exports = class RoutingJob {
     let ignore = true;
     if (routingInfo.post) {
       ignore = false;
-      const url = new URL(environment.emailPostUri, environment.baseUrl).href;
+      const url = urlJoin(environment.baseUrl, environment.emailPostUri);
       const headers = environment.emailPostHeaders;
       const request = getDirectPostRequestRouting(
         {
@@ -255,7 +256,7 @@ module.exports = class RoutingJob {
       );
     }
 
-    const url = new URL(environment.emailPostUri, environment.baseUrl).href;
+    const url = urlJoin(environment.baseUrl, environment.emailPostUri);
     const headers = environment.emailPostHeaders;
 
     await this._queue.pushTrackedItem({

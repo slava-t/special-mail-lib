@@ -143,6 +143,11 @@ const parseRoutingConfig = function(data) {
   };
 };
 
+const urlJoin = function(base, uri) {
+  url = new URL(base);
+  hostUrl = `${url.protocol}//${url.host}`
+  return new URL(path.join(url.pathname, uri), hostUrl).href;
+};
 
 const getDomainHashKey = function(domain, len = 2) {
   const normalizedDomain = domain.toLowerCase().replace(/\./g, ' ').trim();
@@ -712,6 +717,7 @@ const generateMessageId = function(domain, prefix = 'id.') {
   return `<${prefix}${Date.now()}.${randomHexString(24)}@${domain}>`;
 };
 
+
 module.exports = {
   DIRECT_CONFIG_HEADERNAME,
   DIRECT_POST_URL_HEADERNAME,
@@ -765,5 +771,6 @@ module.exports = {
   generateEmailGuid,
   extractAddressObjects,
   parseAddresses,
-  getAddressesFromEmail
+  getAddressesFromEmail,
+  urlJoin
 };

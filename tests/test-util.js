@@ -25,6 +25,27 @@ describe('normalizeEOLs', function() {
 
 });
 
+describe('urlJoin', function() {
+  it('should pass', function() {
+    assert.equal(
+      util.urlJoin('http://example.com:1234/api/v1', 'inboxes/emails'),
+      'http://example.com:1234/api/v1/inboxes/emails'
+    );
+    assert.equal(
+      util.urlJoin('http://example.com/api/v1', 'inboxes/emails'),
+      'http://example.com/api/v1/inboxes/emails'
+    );
+    assert.equal(
+      util.urlJoin('http://example.com:1234/api/v1/', '/inboxes/emails/'),
+      'http://example.com:1234/api/v1/inboxes/emails/'
+    );
+    assert.equal(
+      util.urlJoin('http://example.com/api/v1/', '/inboxes/emails/'),
+      'http://example.com/api/v1/inboxes/emails/'
+    );
+  });
+});
+
 describe('generateMessageId', function() {
   it(
     'should correctly generate a message derived from a domain and a prefix',
