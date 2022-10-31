@@ -130,7 +130,7 @@ class JobQueue {
       return true;
     } catch (err) {
       //just log the error
-      this._logger(
+      this._logger.error(
         'ERROR: unexpected error occured while queueing a two staged item',
         err
       );
@@ -148,10 +148,12 @@ class JobQueue {
           expireIn: '30 minutes'
         }
       });
+      //TODO clean
+      this._logger.info(`--- pushe item to queue ${queueName}. Item: ${item}`);
       return true;
     } catch (err) {
       //just log the error.
-      this._logger(
+      this._logger.error(
         'ERROR: unexpected error occurred while queueing an item',
         err
       );
