@@ -149,8 +149,6 @@ class JobQueue {
           expireIn: '30 minutes'
         }
       });
-      //TODO clean
-      this._logger.info(`--- push item to queue ${queueName}. Item: ${item}`);
       return true;
     } catch (err) {
       //just log the error.
