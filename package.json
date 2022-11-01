@@ -3,6 +3,9 @@
   "version": "4.1.0",
   "description": "Special mail lib",
   "main": "index.js",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "scripts": {
     "lint": "eslint ./",
     "test": "NODE_PRESERVE_SYMLINKS=1 mocha \"tests/**/test-*.js\""
