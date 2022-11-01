@@ -1,6 +1,6 @@
 {
   "name": "special-mail-lib",
-  "version": "4.0.7",
+  "version": "4.1.0",
   "description": "Special mail lib",
   "main": "index.js",
   "scripts": {
