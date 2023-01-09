@@ -36,7 +36,7 @@
     "js-base64": "^3.7.2",
     "mailparser": "^3.5.0",
     "merge": "^2.1.1",
-    "pg-boss": "^5.2.3",
+    "pg-boss": "^8.3.0",
     "sequelize": "^6.21.3",
     "sleep-promise": "^9.1.0",
     "spf-check": "^0.4.3",
