@@ -1,6 +1,6 @@
 {
   "name": "special-mail-lib",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "Special mail lib",
   "main": "index.js",
   "engines": {
@@ -8,7 +8,11 @@
   },
   "scripts": {
     "lint": "eslint ./",
-    "test": "NODE_PRESERVE_SYMLINKS=1 mocha \"tests/**/test-*.js\""
+    "int-tests": "NODE_PRESERVE_SYMLINKS=1 mocha \"tests/int/**/test-*.js\" ; date",
+    "unit-tests": "NODE_PRESERVE_SYMLINKS=1 mocha \"tests/unit/**/test-*.js\"",
+    "all-tests": "npm run lint && npm run unit-tests && npm run int-tests && echo 'SUCCESS!!'",
+    "test": "./tests/int/run.sh",
+    "release": "npm test && npm publish"
   },
   "repository": {
     "type": "git",
@@ -36,7 +40,7 @@
     "js-base64": "^3.7.2",
     "mailparser": "^3.5.0",
     "merge": "^2.1.1",
-    "pg-boss": "^5.2.3",
+    "pg-boss": "8.3.1",
     "sequelize": "^6.21.3",
     "sleep-promise": "^9.1.0",
     "spf-check": "^0.4.3",

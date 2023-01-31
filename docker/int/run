@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+USER_NID=$(id -nu) USER_UID=$(id -u) USER_GID=$(id -g) docker-compose up --build -d

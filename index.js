@@ -1,17 +1,17 @@
 
 module.exports = {
-  config: require('./config'),
-  DomainNameResolver: require('./DomainNameResolver'),
-  DomainNameVerifier: require('./DomainNameVerifier'),
-  EmailSorter: require('./EmailSorter'),
-  EnvironmentResolver: require('./EnvironmentResolver'),
-  createError: require('./error').createError,
-  MailStore: require('./MailStore'),
-  mailStoreModel: require('./mail-store-model.js'),
-  MxVerifier: require('./MxVerifier'),
-  TestInbox: require('./TestInbox'),
-  jobTypes: require('./job-types'),
-  ...require('./util.js'),
-  ...require('./JobQueue.js'),
-  ...require('./logger.js')
+  config: require('./lib/config.js'),
+  DomainNameResolver: require('./lib/DomainNameResolver.js'),
+  DomainNameVerifier: require('./lib/DomainNameVerifier.js'),
+  EmailSorter: require('./lib/EmailSorter.js'),
+  EnvironmentResolver: require('./lib/EnvironmentResolver.js'),
+  createError: require('./lib/error.js').createError,
+  MailStore: require('./lib/MailStore.js'),
+  mailStoreModel: require('./lib/mail-store-model.js'),
+  MxVerifier: require('./lib/MxVerifier.js'),
+  TestInbox: require('./lib/TestInbox.js'),
+  jobTypes: require('./lib/job-types.js'),
+  ...require('./lib/util.js'),
+  ...require('./lib/JobQueue.js'),
+  ...require('./lib/logger.js')
 };

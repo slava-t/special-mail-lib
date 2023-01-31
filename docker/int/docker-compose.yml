@@ -1,0 +1,30 @@
+version: '3.5'
+
+services:
+  sml:
+    build: ./sml
+    restart: 'no'
+    user: "${USER_UID}:${USER_GID}"
+    volumes:
+      - '../../:/sml'
+      - "/home/${USER_NID}:/home/${USER_NID}"
+      - '/etc/group:/etc/group:ro'
+      - '/etc/passwd:/etc/passwd:ro'
+      - '/etc/shadow:/etc/shadow:ro'
+    networks:
+      - dbnet
+    command: 'tail -f /dev/null'
+  db:
+    image: postgres:12
+    volumes:
+      - './postgres/initdb.d:/docker-entrypoint-initdb.d'
+    environment:
+      - POSTGRES_PASSWORD=sml-integration-tests
+    restart: 'no'
+    networks:
+      - dbnet
+
+networks:
+  dbnet:
+    name: dbnet
+

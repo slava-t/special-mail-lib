@@ -1,5 +1,5 @@
 const assert = require('assert').strict;
-const util = require('../util.js');
+const util = require('./lib/util.js');
 
 describe('normalizeEOLs', function() {
   it('should correctly normalize non strings', function() {
