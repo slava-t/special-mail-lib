@@ -10,7 +10,7 @@ module.exports = {
   mailStoreModel: require('./lib/mail-store-model.js'),
   MxVerifier: require('./lib/MxVerifier.js'),
   TestInbox: require('./lib/TestInbox.js'),
-  jobTypes: require('./lib/job-types.js'),
+  jobTypes: require('./lib/jobs/job-types.js'),
   ...require('./lib/util.js'),
   ...require('./lib/JobQueue.js'),
   ...require('./lib/logger.js')
