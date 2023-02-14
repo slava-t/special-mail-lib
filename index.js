@@ -4,6 +4,7 @@ module.exports = {
   DomainNameResolver: require('./lib/DomainNameResolver.js'),
   DomainNameVerifier: require('./lib/DomainNameVerifier.js'),
   EmailSorter: require('./lib/EmailSorter.js'),
+  EmailParser: require('./lib/EmailParser.js'),
   EnvironmentResolver: require('./lib/EnvironmentResolver.js'),
   createError: require('./lib/error.js').createError,
   MailStore: require('./lib/MailStore.js'),
