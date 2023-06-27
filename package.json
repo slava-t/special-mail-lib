@@ -1,6 +1,6 @@
 {
   "name": "special-mail-lib",
-  "version": "4.2.6",
+  "version": "4.2.7",
   "description": "Special mail lib",
   "main": "index.js",
   "engines": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "lint": "eslint ./",
-    "int-tests": "NODE_PRESERVE_SYMLINKS=1 mocha \"tests/int/**/test-*.js\" ; date",
+    "int-tests": "NODE_PRESERVE_SYMLINKS=1 mocha \"tests/int/**/test-*.js\"",
     "unit-tests": "NODE_PRESERVE_SYMLINKS=1 mocha \"tests/unit/**/test-*.js\"",
     "all-tests": "npm run lint && npm run unit-tests && npm run int-tests && echo 'SUCCESS!!'",
     "test": "./tests/int/run.sh",

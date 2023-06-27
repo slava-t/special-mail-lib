@@ -15,7 +15,7 @@ services:
       - dbnet
     command: 'tail -f /dev/null'
   db:
-    image: postgres:12
+    image: postgres:12.13
     volumes:
       - './postgres/initdb.d:/docker-entrypoint-initdb.d'
     environment:
