@@ -1,6 +1,6 @@
 {
   "name": "special-mail-lib",
-  "version": "4.2.8",
+  "version": "4.3.0",
   "description": "Special mail lib",
   "main": "index.js",
   "engines": {
@@ -39,6 +39,7 @@
     "iconv": "^3.0.1",
     "js-base64": "^3.7.5",
     "mailparser": "^3.6.5",
+    "mailsplit": "^5.4.0",
     "merge": "^2.1.1",
     "nodemailer": "^6.9.4",
     "pg-boss": "^9.0.3",
