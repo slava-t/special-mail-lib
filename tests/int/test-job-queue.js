@@ -10,6 +10,7 @@ describe('job queue', function() {
   let queue = null;
   let items = [];
   beforeEach(async function() {
+    items = [];
     queue = await createJobQueue({
       database: 'queue',
       host: 'db',
@@ -32,7 +33,6 @@ describe('job queue', function() {
   });
 
   it('should process all items', async function() {
-    items = [];
     const WAIT_SECONDS = 60;
     const ITEM_COUNT = 1000;
     let waited = 0;
@@ -53,6 +53,31 @@ describe('job queue', function() {
     items.sort((a, b) => a - b);
     for (let i = 0; i < ITEM_COUNT; ++i) {
       assert.equal(items[i], i);
+    }
+  });
+  it('should process all items in a batch', async function() {
+    const WAIT_SECONDS = 60;
+    const ITEM_COUNT = 1000;
+    let waited = 0;
+    const jobs = [];
+    for (let i = 0; i < ITEM_COUNT; ++i) {
+      jobs.push({
+        arg: i + 5000,
+        job: jobTypes.CALLBACK
+      });
+    }
+    await queue.pushItems(
+      jobs,
+      'mail-test'
+    );
+    while (items.length < ITEM_COUNT && waited < WAIT_SECONDS) {
+      await sleep(1000);
+      waited += 1;
+    }
+    assert.equal(items.length, ITEM_COUNT);
+    items.sort((a, b) => a - b);
+    for (let i = 0; i < ITEM_COUNT; ++i) {
+      assert.equal(items[i], i + 5000);
     }
   });
 });
