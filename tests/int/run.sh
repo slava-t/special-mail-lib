@@ -12,7 +12,7 @@ export USER_UID=$(id -u)
 export USER_GID=$(id -g)
 docker compose up --build -d
 
-sleep 5
+sleep 15
 
 docker compose exec sml bash -c 'cd /sml && npm ci && npm run all-tests'
 
