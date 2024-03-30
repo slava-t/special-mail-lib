@@ -14,5 +14,6 @@ module.exports = {
   jobTypes: require('./lib/jobs/job-types.js'),
   ...require('./lib/util.js'),
   ...require('./lib/JobQueue.js'),
-  ...require('./lib/logger.js')
+  ...require('./lib/logger.js'),
+  ...require('./lib/parse-email-file.js')
 };
