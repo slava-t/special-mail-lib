@@ -1,6 +1,6 @@
 {
   "name": "special-mail-lib",
-  "version": "4.7.7",
+  "version": "4.7.9",
   "description": "Special mail lib",
   "main": "index.js",
   "engines": {
@@ -41,9 +41,9 @@
     "mailparser": "^3.6.5",
     "mailsplit": "^5.4.0",
     "merge": "^2.1.1",
-    "nodemailer": "^6.9.7",
+    "nodemailer": "^7.0.9",
     "pg-boss": "^9.0.3",
-    "sequelize": "^6.35.2",
+    "sequelize": "^6.37.7",
     "sleep-promise": "^9.1.0",
     "spf-check": "^0.4.3",
     "stream-buffers": "^3.0.2",
