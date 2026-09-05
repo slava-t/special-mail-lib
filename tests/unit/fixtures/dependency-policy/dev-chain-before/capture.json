@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/usr/bin/npm",
+    "audit",
+    "--package-lock-only",
+    "--include=dev",
+    "--include=optional",
+    "--include=peer",
+    "--json",
+    "--registry=https://registry.npmjs.org",
+    "--userconfig=/tmp/sml-phase05-extra-fixtures-jvodbnag/acquisition/dev-chain-before/user.npmrc",
+    "--globalconfig=/tmp/sml-phase05-extra-fixtures-jvodbnag/acquisition/dev-chain-before/global.npmrc",
+    "--fetch-retries=0",
+    "--cache=/tmp/sml-phase05-extra-fixtures-jvodbnag/acquisition/dev-chain-before/cache"
+  ],
+  "cwd": "/tmp/sml-phase05-extra-fixtures-jvodbnag/acquisition/dev-chain-before",
+  "npm_version": "11.6.2",
+  "captured_at": "2026-09-05T07:35:32.599540+00:00",
+  "exit_code": 1,
+  "stdout_sha256": "b939bd8c743ef6d8a7058b7e2fb0430918ec5d6be1dc83f6375c967089619238"
+}

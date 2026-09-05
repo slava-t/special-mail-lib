@@ -1,0 +1,22 @@
+{
+  "purpose": "fixture-input acquisition only; no checker validation",
+  "command": [
+    "npm",
+    "audit",
+    "--package-lock-only",
+    "--include=dev",
+    "--include=optional",
+    "--include=peer",
+    "--json",
+    "--registry=https://registry.npmjs.org",
+    "--userconfig=/tmp/sml-phase05-advisory-research-2d04ir3d/user.npmrc",
+    "--globalconfig=/tmp/sml-phase05-advisory-research-2d04ir3d/global.npmrc",
+    "--fetch-retries=0",
+    "--cache=/tmp/sml-phase05-advisory-research-2d04ir3d/npm-cache"
+  ],
+  "cwd": "/tmp/sml-phase05-advisory-research-2d04ir3d/severity-after",
+  "started_at": "2026-09-05T06:48:55.994256+00:00",
+  "exit_code": 1,
+  "npm_version": "11.6.2",
+  "sha256": "c52b7624843d0db124cbdd647dc2a1ce1a195ee731b5c3b406450bc2d7def1c8"
+}

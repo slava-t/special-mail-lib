@@ -7,6 +7,7 @@
     "node": ">=16.0.0"
   },
   "scripts": {
+    "dep-policy": "node scripts/check-dependency-policy.js",
     "lint": "eslint ./",
     "int-tests": "NODE_PRESERVE_SYMLINKS=1 mocha \"tests/int/**/test-*.js\"",
     "unit-tests": "NODE_PRESERVE_SYMLINKS=1 mocha \"tests/unit/**/test-*.js\"",

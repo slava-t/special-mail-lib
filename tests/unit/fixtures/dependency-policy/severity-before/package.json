@@ -1,0 +1,9 @@
+{
+  "name": "@dep-policy-fixture/root",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@dep-policy-fixture/x": "1.0.0",
+    "@dep-policy-fixture/y": "1.0.0"
+  }
+}

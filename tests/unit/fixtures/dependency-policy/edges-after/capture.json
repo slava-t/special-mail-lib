@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/usr/bin/npm",
+    "audit",
+    "--package-lock-only",
+    "--include=dev",
+    "--include=optional",
+    "--include=peer",
+    "--json",
+    "--registry=https://registry.npmjs.org",
+    "--userconfig=/tmp/sml-phase05-inputs-k3hd4n2t/edges-after/user.npmrc",
+    "--globalconfig=/tmp/sml-phase05-inputs-k3hd4n2t/edges-after/global.npmrc",
+    "--fetch-retries=0",
+    "--cache=/tmp/sml-phase05-inputs-k3hd4n2t/edges-after/cache"
+  ],
+  "cwd": "/tmp/sml-phase05-inputs-k3hd4n2t/edges-after",
+  "npm_version": "11.6.2",
+  "captured_at": "2026-09-05T07:20:20.594181+00:00",
+  "exit_code": 1,
+  "stdout_sha256": "54ca2efd21a5e354824839ad7456c98aa2b403df9bbaff2fb25dcc6043724b0a"
+}

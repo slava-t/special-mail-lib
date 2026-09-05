@@ -1,8 +1,12 @@
-# special-mail-lib Overview Spec (v1.0)
+# special-mail-lib Overview Spec (v1.1)
 
-This spec set describes `special-mail-lib` v4.7.10 as implemented, and is
-deliberately marker-free: it records current behavior as a compliance baseline,
-so it introduces no INTENT, FUTURE or DEPRECATED content.
+The specs written by the `special-mail-lib` v4.7.10 lock-in pass — the fourteen
+runtime specs and this file's lock-in content — record implemented behavior
+as a compliance baseline and are marker-free. Specs added since that pass
+record desired behavior and use the spec conventions: INTENT for user-directed
+requirements and FUTURE while the code those requirements bind remains
+unbuilt. `dependency-upgrades.md` is the first such addition; §2.1 records
+the design motivation behind it.
 
 This file carries the project overview, the cross-cutting glossary, the map of
 the library's export surface, its packaging contract, and the index of the spec
@@ -59,12 +63,16 @@ These terms are used across the spec set and are defined here once.
 
 ### 1.2 Non-goals
 
-* Marker content. No requirement in this spec set is INTENT-, FUTURE- or
-  DEPRECATED-marked, and no Design motivations section is written: this pass
-  records what exists rather than what is wanted.
+* Marker content in the v4.7.10 lock-in pass. No requirement recorded by that
+  pass — the fourteen runtime specs and this file's lock-in content — is
+  INTENT-, FUTURE- or DEPRECATED-marked, and that pass wrote no Design
+  motivations: it records what exists rather than what is wanted. Spec
+  content added since that pass is marked as the spec conventions require.
 * Commentary on behavior that reads as defective. Where current behavior is
   surprising, the specs state it as it is and say nothing further about it.
-* `tests/` and `docker/`. Neither is part of the library's runtime contract.
+* `tests/` and `docker/` are outside the library's runtime contract.
+  [test-automation.md §5] and [test-automation.md §6] specify their staging
+  and execution by project automation.
 * The internals of third-party dependencies. §4 names them; their own contracts
   are theirs.
 
@@ -89,6 +97,24 @@ Each stage is specified by the spec that owns it: `job-queue.md` for the queue,
 `email-parsing.md` for parsing, `routing.md` for routing decisions, and
 `jobs.md` for the job classes that drive the stages. The values passed between
 them are specified by `transport-model.md` and `routing-headers.md`.
+
+### 2.1 Design motivations
+
+STARTINTENT
+Dependencies are upgraded only to remediate critical and high advisories,
+and never to a version published less than 14 days earlier. The user
+directed the cooldown because of supply-chain attacks, and directed that
+only critical and high advisories trigger an upgrade.
+`dependency-upgrades.md` carries the policy, its scoping, the waiver
+protocol, and the requirements on the automation that enforces it.
+ENDINTENT
+
+STARTINTENT
+The user chose visor2 automation under `ci2/`, with full lint, unit,
+integration and dependency-policy coverage, and authorized agents to run
+`ci2/scripts/all-tests.sh` and cite its output as validation evidence.
+`test-automation.md` carries the automation and validation requirements.
+ENDINTENT
 
 ## 3. Export surface
 
@@ -240,6 +266,11 @@ it resolves to: a range is a packaging decision that changes without changing
 the library's contract, and every third-party behavior this spec set relies on
 is stated in the specs themselves rather than tied to a declared range.
 
+When a dependency's resolved version may change, and to which version, is
+governed by [dependency-upgrades.md §2] and [dependency-upgrades.md §3].
+[dependency-upgrades.md §9] states the boundary with this section; that policy
+pins neither the dependency set nor the ranges described here.
+
 `package.json` also carries `scripts` and `devDependencies`. Both are present,
 and neither is part of the library's runtime contract: a consumer MUST NOT
 depend on either. They are named here rather than specified.
@@ -250,7 +281,16 @@ metadata and are likewise not specified.
 ## 5. Spec index
 
 The spec set lives in `specs/`. Each spec below exists; the relationship and
-ordering notes that follow name every planned file.
+ordering notes and forward mentions name every planned file. Any spec may
+name a spec file that does not yet exist by file name alone, without a
+section: that is a forward mention naming the file that will own the subject,
+not a cross-reference. `dependency-upgrades.md` names `test-automation.md`,
+which owns the automation contract and validation evidence requirements
+([test-automation.md §1], [test-automation.md §9]).
+
+The export-map reachability statements in §3 and the runtime ordering below
+concern the runtime specs. Policy specs supplement that set without owning
+exported symbols.
 
 * `overview.md` — this file: the project overview, cross-cutting glossary,
   export-surface map, packaging contract and spec index.
@@ -292,6 +332,12 @@ ordering notes that follow name every planned file.
   schema, query/delete methods, transaction retrying and scheduled cleanup.
 * `test-inbox.md` — the test inbox client: construction, generated addresses,
   URL fields, HTTP calls, response extraction, group methods and count waiting.
+* `dependency-upgrades.md` — the dependency upgrade policy: the critical-and-
+  high trigger, the 14-day cooldown and its change-set and entry scopes,
+  identification of policed changes, waiver and upgrade-record protocol,
+  and enforcement boundary per rule; INTENT-marked policy rather than lock-in.
+* `test-automation.md` — the visor2 `ci2/` automation contract: staging,
+  suites, runner behavior and project-authorized validation evidence.
 
 ### 5.1 Relationships and ordering
 
@@ -332,6 +378,17 @@ any spec describing a message in transit; `routing-headers.md` before
 `config-and-resolvers.md` and `job-queue.md`, which consume the header
 constants; and `errors.md` before `mx-verification.md` and
 `domain-verification.md`, which raise the codes it catalogs.
+
+`dependency-upgrades.md` is a policy spec rather than a runtime spec. It
+depends on §4 of this file for the dependency set and on nothing else in the
+set; no runtime spec depends on it. It is read after this file, independently
+of the runtime order above.
+
+`test-automation.md` is read after this overview and `dependency-upgrades.md`.
+The dependency spec owns policy; the automation spec owns execution and
+validation evidence. This is reading and ownership order: the policy's
+filename mentions still point to its automation owner. Neither spec changes
+the runtime ordering or owns exported symbols.
 
 ## 6. Tests checklist
 

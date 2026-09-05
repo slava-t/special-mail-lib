@@ -1,0 +1,9 @@
+INCLUDE ./common.visorfile
+SNAPSHOT OFF
+BUILDENV SML_BASELINE_RUN_ID=
+BUILDENV SML_BASELINE_TARGET_B64=
+
+# Record validation and fresh collection occur in this one checker process.
+RUN cd /tmp/special-mail-lib && \
+    node scripts/check-dependency-policy.js \
+      --baseline-dir /tmp/special-mail-lib-baseline

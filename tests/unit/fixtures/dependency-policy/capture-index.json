@@ -1,0 +1,92 @@
+{
+  "collection-after": {
+    "package.json": "adbb24d745ecc8e07eaa294481a09b10d1392f6c7858148b08866f770a626fab",
+    "package-lock.json": "2a7e696037efd2568bb8dc02f5470312f0881203956f10dfdb0bde39a343c70e",
+    "audit.json": "06c18d6ae5bb95560b3aaf924119c2ecbd29a69e9f4f8a67dc2bb1d7bc726c5e"
+  },
+  "collection-before": {
+    "package.json": "e9193b398c4a790f51f12dbee6d6249ccf5ec7a4f19e17bf9b672a79566ae320",
+    "package-lock.json": "c6f5288e1fbe077856d45394b9208008fb2857c7e02206a2eaf592afd1b21253",
+    "audit.json": "0a2a9b8fc8c25ec0d186af35f90b825c99284ec3d655bf1bef249befab649116"
+  },
+  "declared-after": {
+    "package.json": "5c7d29f688d64522073e1d183905dfa2108c3a87fc492ea0a59f326acd62ae75",
+    "package-lock.json": "9627ffc59333f1d9c705c7599ef5ef2e48cd6491a65f36308bfe635c8984b034",
+    "audit.json": "12931fe186a1d5341d0bd56a90726249c7208945f5b9168701ba8b1af5ce8dc3"
+  },
+  "declared-before": {
+    "package.json": "06a62798f4f24518cee93bd2e898ac2ce777eab48d15021ffe0354186f414c95",
+    "package-lock.json": "6e41641fa8f914a9d9f0824ae7a705b38f9216a1f65cbb947c573a9964ed92e8",
+    "audit.json": "846fc260eb0bf70e6b21419d4cab9fcc61c224c7362324d4cbc8aebf8355f9bd"
+  },
+  "dev-chain-after": {
+    "package.json": "621152b90064054e770ee878debf6094a3e98c152e6d8e89ed50b381b83a444a",
+    "package-lock.json": "c1ad0d19df1a11503bc71bb29e53458fbe0216f1ceebdf486bb2b8e54f347abc",
+    "audit.json": "304cf57b4c137d9a027c7a7d265f214d5dc6928138da6ee2b3317b58beeddd3b"
+  },
+  "dev-chain-before": {
+    "package.json": "0903f0691e3d285c12b54b5f16f23423aea93ff86282ecec81f8e37eba3feb35",
+    "package-lock.json": "9ecb42e2a344d426579eda9865bbf6e5bc0986cb1bc3c79f4481c40508c70ebc",
+    "audit.json": "b939bd8c743ef6d8a7058b7e2fb0430918ec5d6be1dc83f6375c967089619238"
+  },
+  "edges-after": {
+    "package.json": "fe4927ab6a3d6a5bb35c7cb03bef38b5a780aa3060436d289539ef489c7e5876",
+    "package-lock.json": "187f134e3a541e613abee875e1b1947cd3bda6e65309056d3313608514434fd6",
+    "audit.json": "54ca2efd21a5e354824839ad7456c98aa2b403df9bbaff2fb25dcc6043724b0a"
+  },
+  "edges-before": {
+    "package.json": "e41d5b01d35c76feae2bf03f5e07ae7081c4ebc52eed1374fa6d4de3f7423e6b",
+    "package-lock.json": "a768463a3264a6344bc3dbbb96e2653057477d5a3f9f9ca430594929f2cf8c74",
+    "audit.json": "e1cce7f9f4b6a7645e08ac0a069601ae9b3cdd4cec60b98740d1c0f55303994f"
+  },
+  "fixed-all": {
+    "package.json": "5eafd697998cb848f202c5188730af41f4d4a59ad7f0ac6f6825be8e0610cdcc",
+    "package-lock.json": "601520485af7b42cac6a5d1b5f64b0be41ba25766c04cc07ce0f08f41db4bf96",
+    "audit.json": "08886336e9ac4c3334d9e199091490029d90496fed849454723ebd7dbc3ceb6d"
+  },
+  "fixed-partial": {
+    "package.json": "5eafd697998cb848f202c5188730af41f4d4a59ad7f0ac6f6825be8e0610cdcc",
+    "package-lock.json": "43d82bf2e65d8ad9eecf9c89aa65d99e92bd8505c2f07a8bfd7899b9e8532bbc",
+    "audit.json": "002178373f21eac7903759adea14b02e14f87206814abb34501c944b63071bed"
+  },
+  "intermediate-bump": {
+    "package.json": "3f3f01d1c9e6ab1bba1f051cff960cbeddb4faa10edb8deb6b5df7041a5ddbac",
+    "package-lock.json": "655651b13f9cef059373184dfd509b0162fe1b4dc3d9f276e725dc8cf48b6c89",
+    "audit.json": "268e104c0aca86506fa0fe06aafca6c27d18ba6f948f5d211af0d9a26f61429a"
+  },
+  "moved-after": {
+    "package.json": "0fd7d4cd9101e16fc04d70657fa65b5a9f328228a0ca481ece5ecbcc079bf960",
+    "package-lock.json": "b0cf2b78bb13f8b069a592228bb46ed32660743be4ca63cdf0d60df8d9a92ba9",
+    "audit.json": "08886336e9ac4c3334d9e199091490029d90496fed849454723ebd7dbc3ceb6d"
+  },
+  "moved-before": {
+    "package.json": "5eafd697998cb848f202c5188730af41f4d4a59ad7f0ac6f6825be8e0610cdcc",
+    "package-lock.json": "beb5229e404de7b223e793ad61be7ff48e8baee43c850ae84c6ee6e00dfb205b",
+    "audit.json": "efd9fd1809bb82a693f331320d3e122c4d4518d34f16cc57417a4aa4a26ea67d"
+  },
+  "removal-after": {
+    "package.json": "5c7d29f688d64522073e1d183905dfa2108c3a87fc492ea0a59f326acd62ae75",
+    "package-lock.json": "27ff4acd9bf6ae5e3b33b02c8ec974eb173df74ccfba6d83b07251fe1c1812f4",
+    "audit.json": "497b1264d3de24fe312ed1b744f5ab5843497e444316cd34c366c52bacf8d789"
+  },
+  "severity-after": {
+    "package.json": "9e581392aeb1602885849af132ecde5bf3a62f571b7a151670c2708124c30b45",
+    "package-lock.json": "6e7afbfa0b6f722a685dfd379c88a116c58ce064c21f4dab9b9328a051c1a1dc",
+    "audit.json": "c52b7624843d0db124cbdd647dc2a1ce1a195ee731b5c3b406450bc2d7def1c8"
+  },
+  "severity-before": {
+    "package.json": "9e581392aeb1602885849af132ecde5bf3a62f571b7a151670c2708124c30b45",
+    "package-lock.json": "3722053a27c8bc99a25f5ce5cd7e63497f0ed64bdb30a5e9d4740b592495adef",
+    "audit.json": "95db82a778badd892b12e6cbc74a7bf60e7b301d883f6a8e178e816a0b061f1a"
+  },
+  "shared-before": {
+    "package.json": "5eafd697998cb848f202c5188730af41f4d4a59ad7f0ac6f6825be8e0610cdcc",
+    "package-lock.json": "58427f507687a8e0f8cb04a2df1d51d03aeecdce156e64a5c7dc44ff6513e813",
+    "audit.json": "268e104c0aca86506fa0fe06aafca6c27d18ba6f948f5d211af0d9a26f61429a"
+  },
+  "vulnerable-partial": {
+    "package.json": "5eafd697998cb848f202c5188730af41f4d4a59ad7f0ac6f6825be8e0610cdcc",
+    "package-lock.json": "5b38d0f5b905d07d980a3a6120d0d21991303811fd0f5971f9a7f25d1c766605",
+    "audit.json": "295c693feb7913959e9fd2679ed4f72a390a93af3e7ad574329ff2db4975ab47"
+  }
+}

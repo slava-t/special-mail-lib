@@ -1,0 +1,53 @@
+MACHINE 0
+FROM ubuntu24
+
+# Provisioning only; every leaf disables snapshots before its current checks.
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    sudo apt-get update && \
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq \
+      bash coreutils git python3 curl ca-certificates tar gzip build-essential \
+      findutils grep sed procps docker.io
+
+# Official v20.19.5 Linux x64 tarball, pinned by SHASUMS256.txt.
+RUN test "$(uname -m)" = x86_64 || { echo "unsupported Node VM architecture" >&2; exit 1; }
+RUN curl -fsSL https://nodejs.org/download/release/v20.19.5/node-v20.19.5-linux-x64.tar.gz \
+      -o /tmp/sml-node.tar.gz && \
+    echo '4eba5fbe1fb10753bc06e42f001a91c5cec16798b7764a3e9257adc59af47fe1  /tmp/sml-node.tar.gz' | sha256sum -c - && \
+    sudo tar -xzf /tmp/sml-node.tar.gz --strip-components=1 -C /usr/local && \
+    rm /tmp/sml-node.tar.gz && \
+    sudo /usr/local/bin/npm install --global npm@11.6.2 && \
+    test "$(node --version)" = v20.19.5 && test "$(npm --version)" = 11.6.2 && \
+    node --version && npm --version
+
+RUN mkdir -p /tmp/special-mail-lib
+COPY ../scripts /tmp/special-mail-lib/scripts
+COPY ../lib /tmp/special-mail-lib/lib
+COPY ../tests /tmp/special-mail-lib/tests
+COPY ../docker /tmp/special-mail-lib/docker
+COPY ../index.js /tmp/special-mail-lib/index.js
+COPY ../package.json /tmp/special-mail-lib/package.json
+COPY ../package-lock.json /tmp/special-mail-lib/package-lock.json
+COPY ../.eslintrc.js /tmp/special-mail-lib/.eslintrc.js
+COPY ../.eslintignore /tmp/special-mail-lib/.eslintignore
+COPY ../ci2 /tmp/special-mail-lib/ci2
+
+RUN cd /tmp/special-mail-lib && \
+    test ! -e .git && test ! -e .local && test ! -e .claude && \
+    test ! -e .codex && test ! -e node_modules && \
+    echo 'Source guards passed: no Git, agent state or host node_modules' && \
+    test "$(readlink tests/unit/lib)" = ../../lib && \
+    test "$(readlink tests/int/lib)" = ../../lib && \
+    test "$(readlink -f tests/unit/lib)" = /tmp/special-mail-lib/lib && \
+    test "$(readlink -f tests/int/lib)" = /tmp/special-mail-lib/lib && \
+    echo 'Both test lib symlinks resolve inside the stage tree'
+
+# Pair COPYs above invalidate installation. Fresh generated inputs come later.
+RUN cd /tmp/special-mail-lib && \
+    lock_before="$(sha256sum package-lock.json)" && \
+    npm ci --include=dev && \
+    test "$lock_before" = "$(sha256sum package-lock.json)" && \
+    echo "Locked installation preserved $lock_before"
+
+# The host creates this exclusive directory; it never overwrites proposed files.
+COPY ../.ci2-baseline /tmp/special-mail-lib-baseline

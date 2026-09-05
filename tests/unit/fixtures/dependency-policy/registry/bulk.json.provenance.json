@@ -1,0 +1,12 @@
+{
+  "url": "https://registry.npmjs.org/-/npm/v1/security/advisories/bulk",
+  "method": "POST",
+  "body": {
+    "minimist": [
+      "1.2.0",
+      "1.2.8"
+    ]
+  },
+  "captured_at": "2026-09-05T07:20:21.039327+00:00",
+  "sha256": "6f6eeb2c9bf03fa0f5380171c26db11d53d1ecba95c9ab79a4ae24b5decbb2cb"
+}

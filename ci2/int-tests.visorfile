@@ -1,0 +1,242 @@
+INCLUDE ./common.visorfile
+SNAPSHOT OFF
+BUILDENV SML_BASELINE_RUN_ID=
+BUILDENV SML_BASELINE_TARGET_B64=
+
+# Fresh consistency checks use invocation values, outside every cached layer.
+RUN python3 -c 'exec( \
+    "import base64\n" \
+    "import hashlib\n" \
+    "import json\n" \
+    "import os\n" \
+    "from pathlib import Path\n" \
+    "import re\n" \
+    "import sys\n" \
+    "\n" \
+    "baseline = Path(\"/tmp/special-mail-lib-baseline\")\n" \
+    "proposed = Path(\"/tmp/special-mail-lib\")\n" \
+    "run_id = os.environ.get(\"SML_BASELINE_RUN_ID\", \"\")\n" \
+    "target_b64 = os.environ.get(\"SML_BASELINE_TARGET_B64\", \"\")\n" \
+    "\n" \
+    "def require(condition, message):\n" \
+    "    if not condition:\n" \
+    "        raise ValueError(message)\n" \
+    "\n" \
+    "def read_regular(directory, name):\n" \
+    "    path = directory / name\n" \
+    "    require(not path.is_symlink() and path.is_file(), name + \" must be a regular file\")\n" \
+    "    return path.read_bytes()\n" \
+    "\n" \
+    "try:\n" \
+    "    require(not baseline.is_symlink() and baseline.is_dir(), \"baseline directory missing\")\n" \
+    "    names = {path.name for path in baseline.iterdir()}\n" \
+    "    if not run_id and not target_b64:\n" \
+    "        require(names == {\"not-requested\"}, \"missing invocation identity for prepared inputs\")\n" \
+    "        require(read_regular(baseline, \"not-requested\") == b\"not-requested\\n\", \"invalid sentinel\")\n" \
+    "        print(\"Baseline not requested; no policy decision\")\n" \
+    "        sys.exit(0)\n" \
+    "    require(bool(re.fullmatch(r\"[0-9a-f]{64}\", run_id)), \"invalid invocation run ID\")\n" \
+    "    require(bool(target_b64), \"missing invocation target\")\n" \
+    "    target = base64.b64decode(target_b64, validate=True).decode(\"utf-8\", \"strict\")\n" \
+    "    require(bool(target), \"empty invocation target\")\n" \
+    "    require(names == {\"record.json\", \"package.json\", \"package-lock.json\"}, \"incomplete baseline inputs\")\n" \
+    "    record = json.loads(read_regular(baseline, \"record.json\"))\n" \
+    "    refs = [\"target_commit\", \"review_commit\", \"baseline_ref\", \"baseline_commit\", \"manifest_ref\", \"lockfile_ref\"]\n" \
+    "    hashes = [\"manifest_sha256\", \"lockfile_sha256\", \"review_manifest_sha256\", \"review_lockfile_sha256\"]\n" \
+    "    fields = refs + hashes + [\"schema_version\", \"run_id\", \"target_ref\", \"merge_base_verified\", \"lockfile_version\"]\n" \
+    "    require(isinstance(record, dict) and set(record) == set(fields), \"invalid record fields\")\n" \
+    "    require(type(record[\"schema_version\"]) is int and record[\"schema_version\"] == 1, \"invalid record schema\")\n" \
+    "    require(record[\"merge_base_verified\"] is True, \"merge-base was not verified\")\n" \
+    "    require(type(record[\"lockfile_version\"]) is int, \"invalid lockfile version type\")\n" \
+    "    for field in refs:\n" \
+    "        require(isinstance(record[field], str) and re.fullmatch(r\"[0-9a-f]{40}|[0-9a-f]{64}\", record[field]), \"invalid \" + field)\n" \
+    "    for field in hashes + [\"run_id\"]:\n" \
+    "        require(isinstance(record[field], str) and re.fullmatch(r\"[0-9a-f]{64}\", record[field]), \"invalid \" + field)\n" \
+    "    require(record[\"run_id\"] == run_id, \"baseline freshness mismatch\")\n" \
+    "    require(isinstance(record[\"target_ref\"], str) and record[\"target_ref\"].encode(\"utf-8\") == target.encode(\"utf-8\"), \"invocation target mismatch\")\n" \
+    "    require(all(record[field] == record[\"baseline_commit\"] for field in [\"baseline_ref\", \"manifest_ref\", \"lockfile_ref\"]), \"mixed baseline refs\")\n" \
+    "    manifest = read_regular(baseline, \"package.json\")\n" \
+    "    lockfile = read_regular(baseline, \"package-lock.json\")\n" \
+    "    require(isinstance(json.loads(manifest), dict), \"baseline manifest must be an object\")\n" \
+    "    lock = json.loads(lockfile)\n" \
+    "    require(isinstance(lock, dict) and type(lock.get(\"lockfileVersion\")) is int and lock[\"lockfileVersion\"] == record[\"lockfile_version\"], \"baseline lockfile version mismatch\")\n" \
+    "    for data, field in [(manifest, \"manifest_sha256\"), (lockfile, \"lockfile_sha256\"),\n" \
+    "                        (read_regular(proposed, \"package.json\"), \"review_manifest_sha256\"),\n" \
+    "                        (read_regular(proposed, \"package-lock.json\"), \"review_lockfile_sha256\")]:\n" \
+    "        require(hashlib.sha256(data).hexdigest() == record[field], field + \" mismatch\")\n" \
+    "    print(\"Baseline inputs verified: \" + json.dumps(record, sort_keys=True))\n" \
+    "except (OSError, ValueError) as exc:\n" \
+    "    print(\"Baseline input error: \" + str(exc), file=sys.stderr)\n" \
+    "    sys.exit(1)\n" \
+)'
+
+# One Bash lifecycle owns database setup, all tests and cleanup.
+RUN bash -c 'set -euo pipefail; \
+cd /tmp/special-mail-lib; \
+run_dir=""; container_name=""; container_id=""; hosts_line=""; \
+container_attempted=false; hosts_owned=false; daemon_started=false; socket_started=false; \
+volumes=(); service_kind=""; \
+dock() { \
+    sudo -n env -u DOCKER_HOST -u DOCKER_CONTEXT -u DOCKER_TLS_VERIFY -u DOCKER_CERT_PATH -u DOCKER_API_VERSION -u DOCKER_CONFIG timeout --kill-after=2s "${docker_timeout:-15}s" docker --host unix:///var/run/docker.sock --config "$run_dir/docker-config" "$@"; \
+}; \
+fail() { echo "Integration error: $*" >&2; exit 1; }; \
+service_stop() { \
+    local state status_rc; \
+    if [[ "$service_kind" == systemctl ]]; then \
+        sudo -n timeout --kill-after=2s 20s systemctl stop docker.service || return 1; \
+        if [[ "$socket_started" == true ]]; then \
+            sudo -n timeout --kill-after=2s 10s systemctl stop docker.socket || return 1; \
+            state="$(sudo -n timeout 5s systemctl show --property=ActiveState --value docker.socket)" || return 1; \
+            [[ "$state" == inactive ]] || return 1; \
+        fi; \
+        state="$(sudo -n timeout 5s systemctl show --property=ActiveState --value docker.service)" || return 1; \
+        [[ "$state" == inactive ]] || return 1; \
+    else \
+        sudo -n timeout --kill-after=2s 20s service docker stop || return 1; \
+        if sudo -n timeout 5s service docker status; then return 1; \
+        else status_rc=$?; [[ "$status_rc" -eq 3 ]] || return 1; fi; \
+    fi; \
+}; \
+read_volumes() { \
+    local names; \
+    names="$(dock inspect --format "{{range .Mounts}}{{if eq .Type \"volume\"}}{{println .Name}}{{end}}{{end}}" "$container_id")" || return 1; \
+    volumes=(); \
+    while IFS= read -r volume; do \
+        [[ -z "$volume" ]] || volumes+=("$volume"); \
+    done <<< "$names"; \
+}; \
+cleanup() { \
+    local rc=$? errors=0 ids remaining volume volume_list; \
+    trap - EXIT; trap "" INT TERM; set +e; \
+    if [[ "$rc" -ne 0 ]]; then \
+        echo "Integration failure status: $rc" >&2; \
+        if [[ -n "$container_id" ]]; then dock logs --tail 80 "$container_id" >&2; fi; \
+        sudo -n timeout 5s journalctl -u docker --no-pager -n 30 >&2; \
+    fi; \
+    if [[ "$container_attempted" == true ]]; then \
+        ids="$(dock ps --all --quiet --no-trunc --filter "name=^/$container_name$" --filter "label=sml.integration.run=$container_name")"; \
+        if [[ $? -ne 0 ]]; then \
+            echo "Integration cleanup error: cannot enumerate owned container" >&2; errors=1; \
+        elif [[ -n "$ids" ]]; then \
+            container_id="$ids"; \
+            read_volumes || errors=1; \
+            dock rm --force --volumes "$container_id" || errors=1; \
+        fi; \
+        remaining="$(dock ps --all --quiet --no-trunc --filter "name=^/$container_name$")"; \
+        if [[ $? -ne 0 || -n "$remaining" ]]; then \
+            echo "Integration cleanup error: container absence unverified" >&2; errors=1; \
+        else \
+            echo "Integration cleanup: container $container_name absent"; \
+        fi; \
+        volume_list="$(dock volume ls --quiet)"; \
+        if [[ $? -ne 0 ]]; then errors=1; else \
+            for volume in "${volumes[@]}"; do \
+                if printf "%s\n" "$volume_list" | grep -Fxq -- "$volume"; then \
+                    echo "Integration cleanup error: volume $volume remains" >&2; errors=1; \
+                else echo "Integration cleanup: anonymous volume $volume absent"; fi; \
+            done; \
+        fi; \
+    fi; \
+    if [[ "$hosts_owned" == true ]]; then \
+        sudo -n timeout --kill-after=2s 10s python3 -c "import fcntl, sys; f=open(\"/etc/hosts\", \"r+\"); fcntl.flock(f, fcntl.LOCK_EX); lines=f.readlines(); kept=[line for line in lines if line != sys.argv[1]+\"\n\"]; f.seek(0); f.writelines(kept); f.truncate(); f.flush(); f.seek(0); assert sys.argv[1]+\"\n\" not in f.readlines(); f.close()" "$hosts_line"; \
+        if [[ $? -ne 0 ]]; then errors=1; else echo "Integration cleanup: owned hosts entry absent"; fi; \
+    fi; \
+    if [[ "$daemon_started" == true ]]; then \
+        if service_stop; then echo "Integration cleanup: owned Docker service stopped"; \
+        else echo "Integration cleanup error: Docker service stop failed" >&2; errors=1; fi; \
+    else echo "Integration cleanup: pre-existing Docker service preserved"; fi; \
+    if [[ -n "$run_dir" ]]; then \
+        sudo -n timeout --kill-after=2s 10s rm -rf -- "$run_dir"; \
+        if [[ $? -ne 0 || -e "$run_dir" ]]; then errors=1; \
+        else echo "Integration cleanup: temporary metadata absent"; fi; \
+    fi; \
+    if [[ "$errors" -ne 0 ]]; then \
+        echo "Integration cleanup failed" >&2; \
+        if [[ "$rc" -eq 0 ]]; then rc=1; fi; \
+    else echo "Integration cleanup complete"; fi; \
+    exit "$rc"; \
+}; \
+trap cleanup EXIT; \
+trap "exit 130" INT; \
+trap "exit 143" TERM; \
+run_dir="$(mktemp -d /tmp/sml-int.XXXXXXXXXX)"; \
+container_name="${run_dir##*/}"; \
+mkdir "$run_dir/docker-config"; \
+echo "Integration service setup: $container_name"; \
+echo "Integration runtime: $(node --version), npm $(npm --version)"; \
+daemon_deadline=$((SECONDS + 60)); \
+if ! docker_timeout=3 dock info >"$run_dir/docker-info" 2>&1; then \
+    if [[ -d /run/systemd/system ]]; then \
+        service_kind=systemctl; \
+        daemon_state="$(sudo -n timeout 3s systemctl show --property=ActiveState --value docker.service)" || fail "cannot determine Docker service ownership"; \
+        if [[ "$daemon_state" != active && "$daemon_state" != activating ]]; then \
+            [[ "$daemon_state" == inactive || "$daemon_state" == failed ]] || fail "unexpected Docker service state: $daemon_state"; \
+            socket_state="$(sudo -n timeout 3s systemctl show --property=ActiveState --value docker.socket)" || fail "cannot determine Docker socket ownership"; \
+            [[ "$socket_state" == active || "$socket_state" == inactive ]] || fail "unexpected Docker socket state: $socket_state"; \
+            daemon_started=true; \
+            if [[ "$socket_state" == inactive ]]; then socket_started=true; fi; \
+            sudo -n timeout --kill-after=2s "$((daemon_deadline - SECONDS))s" systemctl start docker.service || fail "Docker startup failed"; \
+        fi; \
+    elif command -v service >/dev/null; then \
+        service_kind=service; \
+        if sudo -n timeout 3s service docker status; then :; else \
+            status_rc=$?; [[ "$status_rc" -eq 3 ]] || fail "cannot determine Docker service ownership: $status_rc"; \
+            daemon_started=true; \
+            sudo -n timeout --kill-after=2s "$((daemon_deadline - SECONDS))s" service docker start || fail "Docker startup failed"; \
+        fi; \
+    else fail "no supported Docker service manager"; fi; \
+fi; \
+while ! docker_timeout=3 dock info >"$run_dir/docker-info" 2>&1; do \
+    if (( SECONDS >= daemon_deadline )); then cat "$run_dir/docker-info" >&2; fail "Docker readiness exceeded 60 seconds"; fi; \
+    sleep 1; \
+done; \
+echo "Docker ready on VM-local unix:///var/run/docker.sock (started here: $daemon_started)"; \
+if timeout --kill-after=1s 5s getent ahosts db; then fail "db already resolves"; \
+else lookup_rc=$?; [[ "$lookup_rc" -eq 2 ]] || fail "db resolution precheck failed: $lookup_rc"; fi; \
+python3 -c "import socket; s=socket.socket(); s.bind((\"127.0.0.1\",5432)); s.close()"; \
+hosts_line="127.0.0.1 db # $container_name"; \
+hosts_owned=true; \
+printf "%s\n" "$hosts_line" | sudo -n timeout 5s tee -a /etc/hosts >/dev/null; \
+resolved="$(timeout --kill-after=1s 5s getent ahostsv4 db)"; \
+[[ -n "$resolved" ]] || fail "db did not resolve after mapping"; \
+while read -r address rest; do [[ "$address" == 127.0.0.1 ]] || fail "db resolves outside loopback"; done <<< "$resolved"; \
+docker_timeout=300 dock pull postgres:12.13; \
+dock image inspect --format "PostgreSQL image: {{.Id}} {{json .RepoDigests}}" postgres:12.13; \
+container_attempted=true; \
+dock create --name "$container_name" --label "sml.integration.run=$container_name" --cidfile "$run_dir/container-id" --publish 127.0.0.1:5432:5432 --env POSTGRES_PASSWORD=sml-integration-tests --mount type=bind,src=/tmp/special-mail-lib/docker/int/postgres/initdb.d,dst=/docker-entrypoint-initdb.d,readonly postgres:12.13; \
+container_id="$(sudo -n cat "$run_dir/container-id")"; \
+[[ "$container_id" =~ ^[0-9a-f]{64}$ ]] || fail "invalid created container ID"; \
+read_volumes; \
+echo "Integration owned container: $container_id; anonymous volumes: ${volumes[*]}"; \
+dock start "$container_id"; \
+probe() { \
+    timeout --kill-after=1s "${probe_timeout}s" node -e " \
+        const { Client } = require(\"pg\"); \
+        const client = new Client({host: \"db\", port: 5432, user: \"queue\", database: \"queue\", password: \"sml-integration-tests\", connectionTimeoutMillis: 2000, query_timeout: 2000}); \
+        client.on(\"error\", error => {console.error(error.message); process.exitCode = 1;}); \
+        (async () => { \
+            try { \
+                await client.connect(); \
+                const { rows } = await client.query(\"SELECT current_user, current_database(), current_setting(\$1)::int AS server_version_num, EXISTS(SELECT 1 FROM pg_extension WHERE extname = \$2) AS pgcrypto\", [\"server_version_num\", \"pgcrypto\"]); \
+                const row = rows[0]; \
+                if (row.current_user !== \"queue\" || row.current_database !== \"queue\" || row.server_version_num !== 120013 || row.pgcrypto !== true) throw new Error(\"database prerequisites mismatch: \" + JSON.stringify(row)); \
+                console.log(\"PostgreSQL ready via db:5432: \" + JSON.stringify(row)); \
+            } finally { await client.end(); } \
+        })().catch(error => {console.error(error.message); process.exitCode = 1;}); \
+    "; \
+}; \
+ready=false; deadline=$((SECONDS + 120)); \
+while (( SECONDS < deadline )); do \
+    remaining=$((deadline - SECONDS)); docker_timeout=$((remaining < 3 ? remaining : 3)); \
+    running="$(dock inspect --format "{{.State.Running}}" "$container_id")" || fail "cannot inspect PostgreSQL state"; \
+    [[ "$running" == true ]] || fail "PostgreSQL exited before readiness"; \
+    remaining=$((deadline - SECONDS)); (( remaining > 0 )) || break; \
+    probe_timeout=$((remaining < 5 ? remaining : 5)); \
+    if probe >"$run_dir/readiness" 2>&1; then ready=true; cat "$run_dir/readiness"; break; fi; \
+    remaining=$((deadline - SECONDS)); (( remaining > 0 )) || break; \
+    sleep "$((remaining < 2 ? remaining : 2))"; \
+done; \
+unset docker_timeout; \
+if [[ "$ready" != true ]]; then cat "$run_dir/readiness" >&2; fail "PostgreSQL readiness exceeded 120 seconds"; fi; \
+echo "Integration tests: full npm run int-tests"; \
+npm run int-tests;'
