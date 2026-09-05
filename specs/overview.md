@@ -1,12 +1,12 @@
-# special-mail-lib Overview Spec (v1.1)
+# special-mail-lib Overview Spec (v2.0)
 
-The specs written by the `special-mail-lib` v4.7.10 lock-in pass — the fourteen
-runtime specs and this file's lock-in content — record implemented behavior
-as a compliance baseline and are marker-free. Specs added since that pass
-record desired behavior and use the spec conventions: INTENT for user-directed
-requirements and FUTURE while the code those requirements bind remains
-unbuilt. `dependency-upgrades.md` is the first such addition; §2.1 records
-the design motivation behind it.
+The `special-mail-lib` v4.7.10 lock-in pass established a marker-free compliance
+baseline in the fourteen runtime specs and this file. Later additions and
+revisions record desired behavior, including the current packaging and runtime
+contract in §4. They use INTENT for user-directed requirements and FUTURE for
+longer-term goals, not immediate implementation targets.
+`dependency-upgrades.md` was the first addition; §2.1 records the policy and
+automation design motivations.
 
 This file carries the project overview, the cross-cutting glossary, the map of
 the library's export surface, its packaging contract, and the index of the spec
@@ -63,11 +63,10 @@ These terms are used across the spec set and are defined here once.
 
 ### 1.2 Non-goals
 
-* Marker content in the v4.7.10 lock-in pass. No requirement recorded by that
-  pass — the fourteen runtime specs and this file's lock-in content — is
-  INTENT-, FUTURE- or DEPRECATED-marked, and that pass wrote no Design
-  motivations: it records what exists rather than what is wanted. Spec
-  content added since that pass is marked as the spec conventions require.
+* Marker content in the original v4.7.10 lock-in pass. That pass wrote the
+  fourteen runtime specs and this file's original content without INTENT,
+  FUTURE or DEPRECATED markers or Design motivations. Later additions and
+  revisions use the spec conventions.
 * Commentary on behavior that reads as defective. Where current behavior is
   surprising, the specs state it as it is and say nothing further about it.
 * `tests/` and `docker/` are outside the library's runtime contract.
@@ -229,11 +228,15 @@ export map does not reach.
 | `name` | `special-mail-lib` |
 | `version` | `4.7.10` |
 | `main` | `index.js` |
-| `engines.node` | `>=16.0.0` |
 | `license` | `MIT` |
 
-A consumer MUST therefore reach the export surface of §3 by requiring the
-package itself, and MUST run it on Node 16 or later.
+STARTINTENT
+`package.json` MUST declare `engines.node` as `>=20.19.0`, and consumers
+MUST run the library on Node 20.19.0 or later. The user selected this minimum
+for Mailparser upgrades.
+ENDINTENT
+
+A consumer MUST reach the export surface of §3 by requiring the package itself.
 
 The package MUST declare exactly these 18 runtime dependencies. The concern
 column states what each supports in this library; the modules named are where
@@ -293,7 +296,8 @@ concern the runtime specs. Policy specs supplement that set without owning
 exported symbols.
 
 * `overview.md` — this file: the project overview, cross-cutting glossary,
-  export-surface map, packaging contract and spec index.
+  export-surface map, packaging and consumer-runtime contract (§4), and spec
+  index.
 * `errors.md` — the `createError` factory and the twelve-entry error catalog it
   formats messages from.
 * `logging.md` — the module-level default winston logger and the `getLogger`
@@ -337,7 +341,8 @@ exported symbols.
   identification of policed changes, waiver and upgrade-record protocol,
   and enforcement boundary per rule; INTENT-marked policy rather than lock-in.
 * `test-automation.md` — the visor2 `ci2/` automation contract: staging,
-  suites, runner behavior and project-authorized validation evidence.
+  runtime coverage, suites, runner behavior and project-authorized validation
+  evidence.
 
 ### 5.1 Relationships and ordering
 

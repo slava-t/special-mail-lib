@@ -1,4 +1,4 @@
-# Test Automation Spec (v1.0)
+# Test Automation Spec (v1.1)
 
 This spec defines `special-mail-lib` automation through `visor2 build` under
 `ci2/`: file layout, VM provisioning, source staging, suites, the outer runner
@@ -198,10 +198,11 @@ with a diagnostic. Node and npm do not come from apt. Apt provisioning SHOULD
 use cache mounts for `/var/cache/apt` and `/var/lib/apt`.
 
 The Node selection is automation coverage, matching the major used by the
-existing integration image. It neither changes nor proves the Node 16+
-consumer requirement of [overview.md §4]. The minimum 20.17.0 makes the
-selected Node 20 runtime compatible with npm 11.6.2. Provisioning MUST record
-the actual runtime and package-manager versions in its validation evidence.
+existing integration image. The pinned runtime satisfies the consumer
+requirement of [overview.md §4], but does not exercise the exact minimum or
+every later supported version. The minimum 20.17.0 makes the selected Node 20
+runtime compatible with npm 11.6.2. Provisioning MUST record the actual runtime
+and package-manager versions in its validation evidence.
 
 Common MUST provision `docker.io`; service execution and integration
 coverage belong to §6.3.
@@ -921,7 +922,8 @@ not imported by the runner port.
 ### 10.3 Common layer
 
 * The VM provides every capability and selected Node/npm version of §5.1;
-  evidence records those versions without claiming Node 16 coverage.
+  evidence records those versions without claiming coverage of the exact
+  consumer minimum of [overview.md §4] or every later supported version.
 * All §5.2 COPY inputs reach their matching destinations; both test
   symlinks resolve to the staged `lib/`.
 * Forbidden-copy guards run after staging and before install; `.git`

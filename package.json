@@ -4,7 +4,7 @@
   "description": "Special mail lib",
   "main": "index.js",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=20.19.0"
   },
   "scripts": {
     "dep-policy": "node scripts/check-dependency-policy.js",
@@ -35,21 +35,26 @@
   "dependencies": {
     "address-rfc2821": "^2.1.1",
     "addressparser": "^1.0.1",
-    "axios": "^1.6.2",
+    "axios": "^1.18.0",
     "haraka-dsn": "^1.0.4",
     "iconv": "^3.0.1",
     "js-base64": "^3.7.5",
-    "mailparser": "^3.6.5",
+    "mailparser": "^3.9.16",
     "mailsplit": "^5.4.0",
     "merge": "^2.1.1",
-    "nodemailer": "^7.0.9",
+    "nodemailer": "^9.0.5",
     "pg-boss": "^9.0.3",
-    "sequelize": "^6.37.7",
+    "sequelize": "^6.37.8",
     "sleep-promise": "^9.1.0",
     "spf-check": "^0.4.3",
     "stream-buffers": "^3.0.2",
     "string-template": "^1.0.0",
     "winston": "^3.11.0",
     "yaml": "^2.3.4"
+  },
+  "overrides": {
+    "mocha": {
+      "serialize-javascript": "7.0.3"
+    }
   }
 }

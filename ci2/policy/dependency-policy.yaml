@@ -1,3 +1,515 @@
 schema_version: 1
-upgrade_record: null
-waivers: []
+upgrade_record:
+  upgrades:
+  - package: axios
+    from_version: 1.12.2
+    target_version: 1.18.0
+    advisory_ids:
+    - GHSA-35jp-ww65-95wh
+    - GHSA-3g43-6gmg-66jw
+    - GHSA-43fc-jf86-j433
+    - GHSA-6chq-wfr3-2hj9
+    - GHSA-777c-7fjr-54vf
+    - GHSA-hfxv-24rg-xrqf
+    - GHSA-j5f8-grm9-p9fc
+    - GHSA-p92q-9vqr-4j8v
+    - GHSA-pf86-5x62-jrwf
+    - GHSA-pmwg-cvhr-8vh7
+    - GHSA-q8qp-cvcw-x6jj
+  - package: form-data
+    from_version: 4.0.4
+    target_version: 4.0.6
+    advisory_ids:
+    - GHSA-hmw2-7cc7-3qxx
+  - package: sequelize
+    from_version: 6.37.7
+    target_version: 6.37.8
+    advisory_ids:
+    - GHSA-6457-6jrx-69cr
+  - package: validator
+    from_version: 13.15.15
+    target_version: 13.15.22
+    advisory_ids:
+    - GHSA-vghf-hv5q-vc2g
+  - package: lodash
+    from_version: 4.17.21
+    target_version: 4.18.0
+    advisory_ids:
+    - GHSA-r5fr-rjxr-66jc
+  - package: follow-redirects
+    from_version: 1.15.6
+    target_version: 1.16.0
+    advisory_ids:
+    - GHSA-35jp-ww65-95wh
+    - GHSA-3g43-6gmg-66jw
+    - GHSA-43fc-jf86-j433
+    - GHSA-6chq-wfr3-2hj9
+    - GHSA-777c-7fjr-54vf
+    - GHSA-hfxv-24rg-xrqf
+    - GHSA-j5f8-grm9-p9fc
+    - GHSA-p92q-9vqr-4j8v
+    - GHSA-pf86-5x62-jrwf
+    - GHSA-pmwg-cvhr-8vh7
+    - GHSA-q8qp-cvcw-x6jj
+  - package: proxy-from-env
+    from_version: 1.1.0
+    target_version: 2.1.0
+    advisory_ids:
+    - GHSA-35jp-ww65-95wh
+    - GHSA-3g43-6gmg-66jw
+    - GHSA-43fc-jf86-j433
+    - GHSA-6chq-wfr3-2hj9
+    - GHSA-777c-7fjr-54vf
+    - GHSA-hfxv-24rg-xrqf
+    - GHSA-j5f8-grm9-p9fc
+    - GHSA-p92q-9vqr-4j8v
+    - GHSA-pf86-5x62-jrwf
+    - GHSA-pmwg-cvhr-8vh7
+    - GHSA-q8qp-cvcw-x6jj
+  - package: hasown
+    from_version: 2.0.2
+    target_version: 2.0.4
+    advisory_ids:
+    - GHSA-hmw2-7cc7-3qxx
+  - package: mailparser
+    from_version: 3.7.5
+    target_version: 3.9.16
+    advisory_ids:
+    - GHSA-p6gq-j5cr-w38f
+    - GHSA-rcmh-qjqh-p98v
+    - GHSA-22p9-wv53-3rq4
+    - GHSA-v245-v573-v5vm
+  - package: html-to-text
+    from_version: 9.0.5
+    target_version: 10.0.1
+    advisory_ids:
+    - GHSA-p6gq-j5cr-w38f
+    - GHSA-rcmh-qjqh-p98v
+    - GHSA-22p9-wv53-3rq4
+    - GHSA-v245-v573-v5vm
+  - package: '@selderee/plugin-htmlparser2'
+    from_version: 0.11.0
+    target_version: 0.12.0
+    advisory_ids:
+    - GHSA-p6gq-j5cr-w38f
+    - GHSA-rcmh-qjqh-p98v
+    - GHSA-22p9-wv53-3rq4
+    - GHSA-v245-v573-v5vm
+  - package: selderee
+    from_version: 0.11.0
+    target_version: 0.12.0
+    advisory_ids:
+    - GHSA-p6gq-j5cr-w38f
+    - GHSA-rcmh-qjqh-p98v
+    - GHSA-22p9-wv53-3rq4
+    - GHSA-v245-v573-v5vm
+  - package: parseley
+    from_version: 0.12.1
+    target_version: 0.13.1
+    advisory_ids:
+    - GHSA-p6gq-j5cr-w38f
+    - GHSA-rcmh-qjqh-p98v
+    - GHSA-22p9-wv53-3rq4
+    - GHSA-v245-v573-v5vm
+  - package: leac
+    from_version: 0.6.0
+    target_version: 0.7.0
+    advisory_ids:
+    - GHSA-p6gq-j5cr-w38f
+    - GHSA-rcmh-qjqh-p98v
+    - GHSA-22p9-wv53-3rq4
+    - GHSA-v245-v573-v5vm
+  - package: peberminta
+    from_version: 0.9.0
+    target_version: 0.10.0
+    advisory_ids:
+    - GHSA-p6gq-j5cr-w38f
+    - GHSA-rcmh-qjqh-p98v
+    - GHSA-22p9-wv53-3rq4
+    - GHSA-v245-v573-v5vm
+  - package: htmlparser2
+    from_version: 8.0.2
+    target_version: 10.1.0
+    advisory_ids:
+    - GHSA-p6gq-j5cr-w38f
+    - GHSA-rcmh-qjqh-p98v
+    - GHSA-22p9-wv53-3rq4
+    - GHSA-v245-v573-v5vm
+  - package: domutils
+    from_version: 3.1.0
+    target_version: 3.2.2
+    advisory_ids:
+    - GHSA-p6gq-j5cr-w38f
+    - GHSA-rcmh-qjqh-p98v
+    - GHSA-22p9-wv53-3rq4
+    - GHSA-v245-v573-v5vm
+  - package: entities
+    from_version: 4.5.0
+    target_version: 7.0.1
+    advisory_ids:
+    - GHSA-p6gq-j5cr-w38f
+    - GHSA-rcmh-qjqh-p98v
+    - GHSA-22p9-wv53-3rq4
+    - GHSA-v245-v573-v5vm
+  - package: iconv-lite
+    from_version: 0.7.0
+    target_version: 0.7.3
+    advisory_ids:
+    - GHSA-p6gq-j5cr-w38f
+    - GHSA-rcmh-qjqh-p98v
+    - GHSA-22p9-wv53-3rq4
+    - GHSA-v245-v573-v5vm
+  - package: libmime
+    from_version: 5.3.7
+    target_version: 5.4.2
+    advisory_ids:
+    - GHSA-p6gq-j5cr-w38f
+    - GHSA-rcmh-qjqh-p98v
+    - GHSA-22p9-wv53-3rq4
+    - GHSA-v245-v573-v5vm
+  - package: iconv-lite
+    from_version: 0.6.3
+    target_version: 0.7.3
+    advisory_ids:
+    - GHSA-p6gq-j5cr-w38f
+    - GHSA-rcmh-qjqh-p98v
+    - GHSA-22p9-wv53-3rq4
+    - GHSA-v245-v573-v5vm
+  - package: linkify-it
+    from_version: 5.0.0
+    target_version: 5.0.2
+    advisory_ids:
+    - GHSA-22p9-wv53-3rq4
+    - GHSA-v245-v573-v5vm
+  - package: nodemailer
+    from_version: 7.0.9
+    target_version: 9.0.5
+    advisory_ids:
+    - GHSA-p6gq-j5cr-w38f
+    - GHSA-rcmh-qjqh-p98v
+  - package: tlds
+    from_version: 1.260.0
+    target_version: 1.261.0
+    advisory_ids:
+    - GHSA-p6gq-j5cr-w38f
+    - GHSA-rcmh-qjqh-p98v
+    - GHSA-22p9-wv53-3rq4
+    - GHSA-v245-v573-v5vm
+  - package: browserslist
+    from_version: 4.23.0
+    target_version: 4.28.7
+    advisory_ids:
+    - GHSA-73wf-gq98-2v4g
+    - GHSA-c83g-rgw3-j3cx
+  - package: flatted
+    from_version: 3.3.1
+    target_version: 3.4.2
+    advisory_ids:
+    - GHSA-25h7-pfq9-p65f
+    - GHSA-rf6f-7fwh-wjgh
+  - package: js-yaml
+    from_version: 4.1.0
+    target_version: 4.3.1
+    advisory_ids:
+    - GHSA-52cp-r559-cp3m
+    - GHSA-5p4m-2wfm-xmqj
+  - package: caniuse-lite
+    from_version: 1.0.30001600
+    target_version: 1.0.30001806
+    advisory_ids:
+    - GHSA-73wf-gq98-2v4g
+    - GHSA-c83g-rgw3-j3cx
+  - package: node-releases
+    from_version: 2.0.14
+    target_version: 2.0.51
+    advisory_ids:
+    - GHSA-73wf-gq98-2v4g
+    - GHSA-c83g-rgw3-j3cx
+  - package: electron-to-chromium
+    from_version: 1.4.722
+    target_version: 1.5.393
+    advisory_ids:
+    - GHSA-73wf-gq98-2v4g
+    - GHSA-c83g-rgw3-j3cx
+  - package: update-browserslist-db
+    from_version: 1.0.13
+    target_version: 1.2.3
+    advisory_ids:
+    - GHSA-73wf-gq98-2v4g
+    - GHSA-c83g-rgw3-j3cx
+  - package: escalade
+    from_version: 3.1.2
+    target_version: 3.2.0
+    advisory_ids:
+    - GHSA-73wf-gq98-2v4g
+    - GHSA-c83g-rgw3-j3cx
+  - package: minimatch
+    from_version: 3.1.2
+    target_version: 3.1.4
+    advisory_ids: &id001
+    - GHSA-23c5-xmqv-rm74
+    - GHSA-3ppc-4f35-3m26
+    - GHSA-7r86-cg39-jmmj
+  - package: minimatch
+    from_version: 5.1.6
+    target_version: 5.1.8
+    advisory_ids: *id001
+  - package: brace-expansion
+    from_version: 1.1.12
+    target_version: 1.1.18
+    advisory_ids: &id002
+    - GHSA-3jxr-9vmj-r5cp
+    - GHSA-mh99-v99m-4gvg
+    - GHSA-rgw5-rvv9-x895
+  - package: brace-expansion
+    from_version: 2.0.2
+    target_version: 2.1.4
+    advisory_ids: *id002
+  - package: picomatch
+    from_version: 2.3.1
+    target_version: 2.3.2
+    advisory_ids:
+    - GHSA-c2c7-rcm5-vvqj
+  - package: serialize-javascript
+    from_version: 6.0.2
+    target_version: 7.0.3
+    advisory_ids:
+    - GHSA-5c6j-r48x-rmvq
+  advisories:
+  - id: GHSA-35jp-ww65-95wh
+    package: axios
+    severity: high
+  - id: GHSA-3g43-6gmg-66jw
+    package: axios
+    severity: high
+  - id: GHSA-43fc-jf86-j433
+    package: axios
+    severity: high
+  - id: GHSA-6chq-wfr3-2hj9
+    package: axios
+    severity: high
+  - id: GHSA-777c-7fjr-54vf
+    package: axios
+    severity: high
+  - id: GHSA-hfxv-24rg-xrqf
+    package: axios
+    severity: high
+  - id: GHSA-j5f8-grm9-p9fc
+    package: axios
+    severity: high
+  - id: GHSA-p92q-9vqr-4j8v
+    package: axios
+    severity: high
+  - id: GHSA-pf86-5x62-jrwf
+    package: axios
+    severity: high
+  - id: GHSA-pmwg-cvhr-8vh7
+    package: axios
+    severity: high
+  - id: GHSA-q8qp-cvcw-x6jj
+    package: axios
+    severity: high
+  - id: GHSA-hmw2-7cc7-3qxx
+    package: form-data
+    severity: high
+  - id: GHSA-r5fr-rjxr-66jc
+    package: lodash
+    severity: high
+  - id: GHSA-6457-6jrx-69cr
+    package: sequelize
+    severity: high
+  - id: GHSA-vghf-hv5q-vc2g
+    package: validator
+    severity: high
+  - id: GHSA-p6gq-j5cr-w38f
+    package: nodemailer
+    severity: high
+  - id: GHSA-rcmh-qjqh-p98v
+    package: nodemailer
+    severity: high
+  - id: GHSA-22p9-wv53-3rq4
+    package: linkify-it
+    severity: high
+  - id: GHSA-v245-v573-v5vm
+    package: linkify-it
+    severity: high
+  - id: GHSA-73wf-gq98-2v4g
+    package: browserslist
+    severity: high
+  - id: GHSA-c83g-rgw3-j3cx
+    package: browserslist
+    severity: high
+  - id: GHSA-25h7-pfq9-p65f
+    package: flatted
+    severity: high
+  - id: GHSA-rf6f-7fwh-wjgh
+    package: flatted
+    severity: high
+  - id: GHSA-52cp-r559-cp3m
+    package: js-yaml
+    severity: high
+  - id: GHSA-5p4m-2wfm-xmqj
+    package: js-yaml
+    severity: high
+  - id: GHSA-23c5-xmqv-rm74
+    package: minimatch
+    severity: high
+  - id: GHSA-3ppc-4f35-3m26
+    package: minimatch
+    severity: high
+  - id: GHSA-7r86-cg39-jmmj
+    package: minimatch
+    severity: high
+  - id: GHSA-3jxr-9vmj-r5cp
+    package: brace-expansion
+    severity: high
+  - id: GHSA-mh99-v99m-4gvg
+    package: brace-expansion
+    severity: high
+  - id: GHSA-rgw5-rvv9-x895
+    package: brace-expansion
+    severity: high
+  - id: GHSA-c2c7-rcm5-vvqj
+    package: picomatch
+    severity: high
+  - id: GHSA-5c6j-r48x-rmvq
+    package: serialize-javascript
+    severity: high
+  waiver_refs:
+  - mailparser-3-7-5-to-3-9-16-20260905
+  date: '2026-09-05'
+  note: |
+    Phase phase-01-http-storage; predecessor 0fa857a60e72bcd8de10c70a32a2e7cd7416d620.
+    Axios 1.18.0 resolves all eleven recorded high Axios advisories. The lowest
+    mature non-downgrade resolving those baseline drivers is 1.16.0, but it is
+    affected by the additional high advisory GHSA-gcfj-64vw-6mp9. Select 1.18.0,
+    the lowest mature candidate without a known high/critical advisory in the
+    2026-09-05 npm registry snapshot. Raise the manifest lower bound accordingly.
+    Form-data 4.0.6, Sequelize 6.37.8, validator 13.15.22 and lodash 4.18.0 are
+    the lowest mature non-downgrades fixing their recorded high advisories.
+    The lodash resolution closes Sequelize, spf-check and spf-check/spf-parse
+    paths. Sequelize's manifest lower bound advances with its direct fix.
+    Axios requires follow-redirects ^1.16.0 and proxy-from-env ^2.1.0; select
+    1.16.0 and 2.1.0 as the lowest compatible mature versions for those required
+    supporting upgrades. Fixed form-data requires hasown ^2.0.4; select 2.0.4.
+    The added https-proxy-agent 5.0.1 is required by Axios ^5.0.1 and adds
+    agent-base 6.0.2, npm's mature compatible resolution of range 6. These are
+    new dependencies with no from-version, not upgrades from invented versions.
+    The npm registry time entries publish https-proxy-agent 5.0.1 at
+    2022-04-14T18:42:00.761Z and agent-base 6.0.2 at 2020-10-23T19:33:15.354Z;
+    both clear 336 hours at selection on 2026-09-05. All ten new exact pairs
+    clear 336 hours; no waiver is used. Registry snapshot, target ranking,
+    publish-time captures and complete path comparison are retained in phase-01
+    WIP implementation evidence. No unrelated dependency resolution is changed.
+    The full branch baseline remains independently resolved by authorized
+    automation; the phase predecessor records transition provenance only.
+
+    Phase phase-02-mail-processing; predecessor 0f361b134c5a18e3b5fc4a374b3d999e841bc087.
+    Mailparser 3.9.16 replaces 3.7.5 to fix both Nodemailer and linkify-it high
+    advisories through the published parent chain. Although 3.9.13 first clears
+    those original drivers, its html-to-text 10.0.0 requires deepmerge-ts <8,
+    introducing high GHSA-ggr8-5vv4-36mx. Versions 3.9.14 and 3.9.15 retain that
+    vulnerable branch. Select 3.9.16, the first parent avoiding all those high
+    instances, using only the user's exact Mailparser cooldown waiver.
+    Nodemailer 9.0.1 is the lowest mature fix for its original high drivers.
+    Select 9.0.5 for the direct range and lock to match Mailparser's required
+    9.0.5 child, keeping composer and parser behavior on one version without
+    runtime overrides. Linkify-it 5.0.2 is the lowest fixed mature target.
+    The other recorded increases are required by the selected Mailparser /
+    html-to-text closure. Record two real iconv-lite transitions: Mailparser's
+    direct 0.7.0 -> 0.7.3 and its libmime child's 0.6.3 -> 0.7.3. The old
+    libmime 5.3.7 and iconv-lite 0.6.3 remain on unchanged direct mailsplit paths;
+    entities 4.5.0 likewise remains on unchanged DOM serializer paths.
+    Add @zone-eu/mailsplit 5.4.15 for Mailparser while retaining root mailsplit
+    5.4.6 and all 18 root runtime dependency names. Add deepmerge-ts 8.0.2 via
+    html-to-text's ^8.0.1 dependency; npm's mature compatible resolution carries the corrected
+    Node >=16.9.0 metadata. Both package names are additions, with no invented
+    from-versions. Remove only the now-unreachable deepmerge 4.3.1 entry, which
+    html-to-text no longer requires. All other supporting targets meet their
+    new parents' minimum or exact required ranges.
+    All 17 new exact pairs were checked against fresh npm publication metadata;
+    only mailparser@3.9.16 is under 336 hours and is admitted by the referenced
+    user-authorized waiver. Its publication is 2026-08-24T11:48:49.899Z and its
+    unwaived maturity is 2026-09-07T11:48:49.899Z. No other pair is waived.
+    The user directed Node >=20.19.0 for Mailparser upgrades; update both root
+    engine declarations after preliminary spec acceptance. Preserve the package
+    version and unrelated lock metadata. Phase provenance is distinct from the
+    authorized gate's independently resolved full-branch merge-base.
+
+    Phase phase-03-lint-transitives; predecessor 9fe25d536b5990f1235af8f0c159be6cfb893d13.
+    Browserslist 4.28.7, flatted 3.4.2 and js-yaml 4.3.1 are the lowest mature
+    non-downgrades resolving all six recorded high advisories in fresh npm
+    metadata. They satisfy the unchanged Babel, ESLint and Mocha parent ranges.
+    All affected shared and peer paths are covered; the phase removes 32 high
+    name-chain instances with none introduced and none remaining on these
+    three packages. The 66 other high instances remain for phase 04.
+    Browserslist requires caniuse-lite ^1.0.30001806, node-releases ^2.0.51,
+    electron-to-chromium ^1.5.393 and update-browserslist-db ^1.2.3. Select the
+    minimum mature versions of those required ranges to support the two
+    Browserslist high drivers. The selected update-browserslist-db requires
+    escalade ^3.2.0; 3.2.0 is its lowest eligible supporting upgrade.
+    Add baseline-browser-mapping 2.10.44 for Browserslist's ^2.10.44 data
+    dependency. It is a new pair without a from-version, not an invented
+    upgrade tuple. Its publication is 2026-07-20T15:44:39.050Z. Retain existing
+    argparse 2.0.1 and picocolors 1.1.1, which already satisfy the new ranges.
+    All nine new pairs clear 336 hours at selection on 2026-09-05. No new
+    waiver is needed; preserve the exact earlier Mailparser authorization.
+    Fresh selection, registry identity, advisory-path and consumed-entry
+    compatibility evidence is retained in phase-03 WIP implementation evidence.
+    The npm advisory source rates both Browserslist drivers high; its severity
+    is the policy authority despite an upstream severity difference for
+    GHSA-c83g-rgw3-j3cx. Preserve the manifest, root tool versions, runtime
+    entries, lint configuration and unrelated lock metadata. Phase provenance
+    remains distinct from the gate's independently resolved branch baseline.
+    Phase phase-04-test-transitives; predecessor ed36644885d68a2418a4b072b5a30876fd0de241.
+    Minimatch 3.1.4 and 5.1.8, brace-expansion 1.1.18 and 2.1.4, picomatch
+    2.3.2 and serialize-javascript 7.0.3 are the lowest mature non-downgrades
+    resolving all eight recorded high advisories in fresh npm metadata.
+    Update all eight affected dev-only locations: root minimatch/brace,
+    glob's minimatch/brace, Mocha's minimatch/brace, and root picomatch and
+    serializer. Repeated copies of one from/target pair share a real tuple.
+    The existing matcher parent ranges accept these versions. Mocha 10.8.2
+    requires serializer ^6.0.2, so add only a Mocha-scoped override to 7.0.3.
+    Keep the root Mocha version/range and test discovery unchanged. The new
+    serializer uses built-in Web Crypto on Node 20 and removes randombytes;
+    remove only that now-unreachable dev entry and retain shared safe-buffer.
+    Randombytes removal is not an upgrade with an invented target version.
+    All six new exact pairs clear 336 hours at selection on 2026-09-05; no
+    new waiver is needed. Preserve the exact earlier Mailparser authorization.
+    The serializer's pre-existing moderate GHSA-qj8w-gfj5-8c6v does not trigger
+    a further upgrade. Fresh complete-path comparison removes the remaining
+    66 phase high instances and all 108 original branch high instances, with
+    zero high/critical instances introduced or remaining. Cumulative records
+    contain 38 real transitions and 33 advisory identities. Registry snapshots,
+    exact selection times, all affected paths and cumulative correspondence
+    are retained in phase-04 WIP implementation evidence. Runtime entries,
+    Node >=20.19.0, all 18 runtime names and unrelated metadata are preserved.
+    Phase provenance remains distinct from the independently resolved branch
+    merge-base used by the authorized full automation and dependency gate.
+waivers:
+- id: mailparser-3-7-5-to-3-9-16-20260905
+  scope:
+    kind: upgrade
+    package: mailparser
+    from_version: 3.7.5
+    target_version: 3.9.16
+  admitted_entries:
+  - package: mailparser
+    version: 3.9.16
+  drivers:
+    derived: []
+    declared:
+    - id: GHSA-p6gq-j5cr-w38f
+      package: nodemailer
+      severity: high
+    - id: GHSA-rcmh-qjqh-p98v
+      package: nodemailer
+      severity: high
+    - id: GHSA-22p9-wv53-3rq4
+      package: linkify-it
+      severity: high
+    - id: GHSA-v245-v573-v5vm
+      package: linkify-it
+      severity: high
+  user_statement: can we have an exception and do it now?
+  date: '2026-09-05T15:15:56.734Z'
